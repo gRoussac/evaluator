@@ -132,6 +132,10 @@
           "serverTarget": "evaluator:server:production"
         }
       },
+      "options": {
+        "port": 4200,
+        "proxyConfig": "apps/evaluator/proxy.conf.json"
+      },
       "defaultConfiguration": "development"
     },
     "prerender": {

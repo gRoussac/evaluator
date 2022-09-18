@@ -19,8 +19,9 @@ export class AppComponent {
   ) {
     this.window = this.document.defaultView as Window;
     if (this.isBrowser) {
-      const myWebSocket = webSocket(this.window.location.href.replace('http', 'ws').replace(':4200/', '') + ':4000');
-      console.log(this.window.location.href.replace('http', 'ws').replace('4200', '4000'));
+      console.log(this.window.location.href.replace('http', 'ws') + 'ws');
+      const myWebSocket = webSocket(this.window.location.href.replace('http', 'ws') + 'ws');
+
       myWebSocket.asObservable().subscribe(dataFromServer => {
         console.log(dataFromServer);
       });
