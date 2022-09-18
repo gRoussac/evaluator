@@ -1,6 +1,6 @@
 import { Component, InjectionToken } from '@angular/core';
 import { webSocket } from 'rxjs/webSocket';
-import { isPlatformBrowser } from '@angular/common';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { Inject, PLATFORM_ID } from '@angular/core';
 
 @Component({
@@ -11,25 +11,29 @@ import { Inject, PLATFORM_ID } from '@angular/core';
 export class AppComponent {
   title = 'evaluator';
   private isBrowser: boolean = isPlatformBrowser(this.platformId);
+  private window: Window;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: InjectionToken<Record<string, unknown>>) {
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: InjectionToken<Record<string, unknown>>,
+    @Inject(DOCUMENT) private document: Document
+  ) {
+    this.window = this.document.defaultView as Window;
     if (this.isBrowser) {
-      const myWebSocket = webSocket('ws://localhost:4200');
+      const myWebSocket = webSocket(this.window.location.href.replace('http', 'ws').replace(':4200/', '') + ':4000');
+      console.log(this.window.location.href.replace('http', 'ws').replace('4200', '4000'));
       myWebSocket.asObservable().subscribe(dataFromServer => {
         console.log(dataFromServer);
       });
+
+      myWebSocket.next(JSON.stringify({}));
+
     }
+
   }
 
-  // const ws = new WebSocket('ws://localhost:4200');
 
-  //   ws.on('open', function open() {
-  //     ws.send('something');
-  //   });
 
-  //   ws.on('message', function message(data: any) {
-  //     console.log('received: %s', data);
-  //   });
+
 
 
 }

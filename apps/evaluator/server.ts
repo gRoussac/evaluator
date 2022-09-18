@@ -1,3 +1,4 @@
+import * as dotenv from 'dotenv';
 import 'zone.js/dist/zone-node';
 import { APP_BASE_HREF } from '@angular/common';
 import { ngExpressEngine } from '@nguniversal/express-engine';
@@ -8,6 +9,7 @@ import * as express from 'express';
 import { PuppeteerResolverResolver } from './puppeteer';
 import { WebSocketServer } from 'ws';
 import * as http from 'http';
+dotenv.config({ override: true });
 const express_app = express();
 // const testURL = 'https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_eval';
 
@@ -27,8 +29,6 @@ export function app(): express.Express {
 
   // Example Express Rest API endpoints
   express_app.get('/api/*', PuppeteerResolverResolver.resolve);
-
-
 
   // Serve static files from /browser
   express_app.get('*.*', express.static(distFolder, {
@@ -55,7 +55,7 @@ function run(): void {
     console.log(32);
     ws.on('message', (message) => {
       console.log(message);
-      ws.send('mess ' + message);
+      ws.send(JSON.stringify('mess ' + message));
     });
   });
   server.listen(port, () => {
