@@ -1,0 +1,158 @@
+{
+  "projectType": "application",
+  "sourceRoot": "apps/evaluator/src",
+  "prefix": "evaluator",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/evaluator/browser",
+        "index": "apps/evaluator/src/index.html",
+        "main": "apps/evaluator/src/main.ts",
+        "polyfills": "apps/evaluator/src/polyfills.ts",
+        "tsConfig": "apps/evaluator/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          "apps/evaluator/src/favicon.ico",
+          "apps/evaluator/src/assets"
+        ],
+        "styles": [
+          "apps/evaluator/src/styles.scss"
+        ],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "fileReplacements": [
+            {
+              "replace": "apps/evaluator/src/environments/environment.ts",
+              "with": "apps/evaluator/src/environments/environment.prod.ts"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "configurations": {
+        "production": {
+          "browserTarget": "evaluator:build:production"
+        },
+        "development": {
+          "browserTarget": "evaluator:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "evaluator:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/evaluator/**/*.ts",
+          "apps/evaluator/**/*.html"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/apps/evaluator"
+      ],
+      "options": {
+        "jestConfig": "apps/evaluator/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "server": {
+      "executor": "@angular-devkit/build-angular:server",
+      "options": {
+        "outputPath": "dist/evaluator/server",
+        "main": "apps/evaluator/server.ts",
+        "tsConfig": "apps/evaluator/tsconfig.server.json",
+        "inlineStyleLanguage": "scss"
+      },
+      "configurations": {
+        "production": {
+          "outputHashing": "media",
+          "fileReplacements": [
+            {
+              "replace": "apps/evaluator/src/environments/environment.ts",
+              "with": "apps/evaluator/src/environments/environment.prod.ts"
+            }
+          ]
+        },
+        "development": {
+          "optimization": false,
+          "sourceMap": true,
+          "extractLicenses": false
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve-ssr": {
+      "executor": "@nguniversal/builders:ssr-dev-server",
+      "configurations": {
+        "development": {
+          "browserTarget": "evaluator:build:development",
+          "serverTarget": "evaluator:server:development"
+        },
+        "production": {
+          "browserTarget": "evaluator:build:production",
+          "serverTarget": "evaluator:server:production"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "prerender": {
+      "executor": "@nguniversal/builders:prerender",
+      "options": {
+        "routes": [
+          "/"
+        ]
+      },
+      "configurations": {
+        "production": {
+          "browserTarget": "evaluator:build:production",
+          "serverTarget": "evaluator:server:production"
+        },
+        "development": {
+          "browserTarget": "evaluator:build:development",
+          "serverTarget": "evaluator:server:development"
+        }
+      },
+      "defaultConfiguration": "production"
+    }
+  },
+  "tags": []
+}
