@@ -48,17 +48,18 @@ function run(): void {
 
   // Start up the Node app
   const express_app = app();
-  express_app.listen(port, () => {
-    console.log(`Node Express app listening on http://localhost:${port}`);
-  });
-  const server = http.createServer();
+  const server = http.createServer(express_app);
   const wss = new WebSocketServer({ server });
+
   wss.on('connection', (ws) => {
     console.log(32);
     ws.on('message', (message) => {
       console.log(message);
       ws.send('mess ' + message);
     });
+  });
+  server.listen(port, () => {
+    console.log(`Node Express app listening on http://localhost:${port}`);
   });
 }
 
