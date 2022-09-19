@@ -6,7 +6,7 @@ import { existsSync } from 'fs';
 import { join } from 'path';
 import { AppServerModule } from './src/main.server';
 import * as express from 'express';
-import { PuppeteerResolverResolver } from './puppeteer';
+import { PuppeteerResolver } from './puppeteer';
 import { WebSocketServer } from 'ws';
 import * as http from 'http';
 dotenv.config({ override: true });
@@ -28,7 +28,7 @@ export function app(): express.Express {
   express_app.set('views', distFolder);
 
   // Example Express Rest API endpoints
-  express_app.get('/api/*', PuppeteerResolverResolver.resolve);
+  express_app.get('/api/*', PuppeteerResolver.resolve);
 
   // Serve static files from /browser
   express_app.get('*.*', express.static(distFolder, {
@@ -52,10 +52,10 @@ function run(): void {
   const wss = new WebSocketServer({ server });
 
   wss.on('connection', (ws) => {
-    console.log(32);
     ws.on('message', (message) => {
-      console.log(message);
-      ws.send(JSON.stringify('mess ' + message));
+      const url = JSON.parse(message.toString());
+      PuppeteerResolver.resolveSite(url, ws);
+      // ws.send(JSON.stringify(message.toString()));
     });
   });
   server.listen(port, () => {

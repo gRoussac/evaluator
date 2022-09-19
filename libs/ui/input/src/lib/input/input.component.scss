@@ -1,0 +1,19 @@
+input {
+  width: 100%;
+  padding: 30px;
+  box-sizing: border-box;
+  border: none;
+  font-size: 24px;
+  background: black;
+  border-radius: 10px;
+  border: 2px solid #99f3ff;
+  color: white;
+  font-family: 'Orbitron', sans-serif;
+  text-align: center;
+  &:hover,
+  &:focus-visible {
+    transition: 100ms box-shadow cubic-bezier(0, 0, 0.2, 1);
+    box-shadow: #99f3ff 0px 0px 7px 4px;
+    outline: none;
+  }
+}

@@ -1,0 +1,11 @@
+<div class="search-bar">
+  <evaluator-input
+    [(value)]="inputValue"
+    (enter)="onSend(inputValue)"
+  ></evaluator-input>
+  <button (click)="onSend(inputValue)">
+    <i class="material-icons">cloud_upload</i>
+    <span>evaluate</span>
+  </button>
+  <!-- <progress-bar hidden=""></progress-bar> -->
+</div>

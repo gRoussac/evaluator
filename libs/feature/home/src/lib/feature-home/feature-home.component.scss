@@ -1,0 +1,16 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  width: calc(100% - 40px);
+  max-width: 1024px;
+}
+
+h1 {
+  font-size: 60px;
+  color: white;
+  border-bottom: 1px solid #99f3ff;
+  margin: 64px 32px;
+}

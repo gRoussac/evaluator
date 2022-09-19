@@ -1,0 +1,29 @@
+:host {
+  min-width: 300px;
+  width: 100%;
+  max-width: 664px;
+}
+.search-bar {
+  width: 100%;
+  position: relative;
+  box-sizing: border-box;
+}
+
+button {
+  display: block;
+  border-radius: 10px;
+  border: 2px solid #99f3ff;
+  color: white;
+  background: none;
+  display: flex;
+  flex-direction: column;
+  font-size: 16px;
+  font-family: 'Orbitron', sans-serif;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 30px;
+  height: 15px;
+  margin: 25px auto;
+  border-radius: 5px;
+}

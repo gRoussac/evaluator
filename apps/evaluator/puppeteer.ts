@@ -8,14 +8,15 @@ import * as Crypto from 'crypto';
 @Injectable({
   providedIn: 'root'
 })
-export class PuppeteerResolverResolver {
+export class PuppeteerResolver {
 
-
-  static get_url(req: Request): string {
-    const url = new URL(req.url, `http://${req.headers.host}`);
-    const testURL = url.searchParams.get('url');
-    if (!testURL) {
-      return '';
+  static get_url(req: Request | string): string {
+    let testURL: string;
+    if (req instanceof Request) {
+      const url = new URL(req.url);
+      testURL = url.searchParams.get('url') || '';
+    } else {
+      testURL = req.toString();
     }
     return testURL;
   }
@@ -33,7 +34,7 @@ export class PuppeteerResolverResolver {
         res.write(JSON.stringify(test));
         res.write(',');
       });
-      await puppet.goto(PuppeteerResolverResolver.get_url(req));
+      await puppet.goto(PuppeteerResolver.get_url(req));
       await puppet.close();
       res.write(']');
       res.send();
@@ -43,6 +44,26 @@ export class PuppeteerResolverResolver {
     }
 
     // res.status(200).send(result);
+  }
+
+  static async resolveSite(url: string, ws: any) {
+    try {
+      const puppet = new Puppet();
+      puppet.result$.subscribe(result => {
+        const key = Crypto.createHash('sha256').update(result).digest('hex');
+        const obj = {
+          'sha256': key,
+          'result': result
+        };
+        console.log(obj);
+        ws.send(JSON.stringify(obj));
+      });
+      await puppet.goto(url);
+      await puppet.close();
+    }
+    catch (error) {
+      return error;
+    }
   }
 }
 

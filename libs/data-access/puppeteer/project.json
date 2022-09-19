@@ -1,0 +1,25 @@
+{
+  "projectType": "library",
+  "sourceRoot": "libs/data-access/puppeteer/src",
+  "prefix": "evaluator",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/data-access/puppeteer"],
+      "options": {
+        "jestConfig": "libs/data-access/puppeteer/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/data-access/puppeteer/**/*.ts",
+          "libs/data-access/puppeteer/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": ["puppeteer"]
+}

@@ -5,9 +5,7 @@
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/evaluator/browser",
         "index": "apps/evaluator/src/index.html",
@@ -19,9 +17,7 @@
           "apps/evaluator/src/favicon.ico",
           "apps/evaluator/src/assets"
         ],
-        "styles": [
-          "apps/evaluator/src/styles.scss"
-        ],
+        "styles": ["apps/evaluator/src/styles.scss"],
         "scripts": []
       },
       "configurations": {
@@ -86,9 +82,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "coverage/apps/evaluator"
-      ],
+      "outputs": ["coverage/apps/evaluator"],
       "options": {
         "jestConfig": "apps/evaluator/jest.config.ts",
         "passWithNoTests": true
@@ -133,7 +127,6 @@
         }
       },
       "options": {
-        "port": 4200,
         "proxyConfig": "apps/evaluator/proxy.conf.json"
       },
       "defaultConfiguration": "development"
@@ -141,9 +134,7 @@
     "prerender": {
       "executor": "@nguniversal/builders:prerender",
       "options": {
-        "routes": [
-          "/"
-        ]
+        "routes": ["/"]
       },
       "configurations": {
         "production": {

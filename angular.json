@@ -3,7 +3,12 @@
   "version": 2,
   "projects": {
     "api-phantomjs": "apps/api/phantomjs",
+    "data-access-puppeteer": "libs/data-access/puppeteer",
     "evaluator": "apps/evaluator",
-    "evaluator-e2e": "apps/evaluator-e2e"
+    "evaluator-e2e": "apps/evaluator-e2e",
+    "feature-home": "libs/feature/home",
+    "feature-results": "libs/feature/results",
+    "feature-search-bar": "libs/feature/search-bar",
+    "ui-input": "libs/ui/input"
   }
 }
