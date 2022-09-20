@@ -11,14 +11,23 @@ export class InputComponent implements OnInit {
   @Input() value = '';
   @Output() valueChange = new EventEmitter<string>();
   @Output() enter = new EventEmitter<void>();
+  @Input() isValid = false;
+  @Output() isValidChange = new EventEmitter<boolean>();
+
+  private _value = ''; // memoize value to compare
 
   ngOnInit(): void { }
 
   onChange(event: Event) {
-    this.valueChange.emit((event.target as HTMLInputElement).value);
+    const element = (event.target as HTMLInputElement);
+    this.isValidChange.emit(element.checkValidity());
+    this.valueChange.emit(element.value);
   }
 
   onEnter() {
-    this.enter.emit();
+    if (this.isValid && (this.value != this._value)) {
+      this.enter.emit();
+      this._value = this.value;
+    }
   }
 }

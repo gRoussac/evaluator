@@ -1,6 +1,10 @@
-<ul>
+<ul [hidden]="!results.length">
   <li *ngFor="let result of results">
     <h4>{{ result.sha256 }}</h4>
-    <pre>{{ result.result }}</pre>
+    <div class="pre">{{ result.result }}</div>
   </li>
 </ul>
+
+<h3 *ngIf="hasResponse && !results.length && url" class="no-result">
+  No Eval run on {{ url }}
+</h3>

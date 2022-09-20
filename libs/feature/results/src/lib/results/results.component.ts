@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'evaluator-results',
@@ -8,8 +8,9 @@ import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core
 })
 export class ResultsComponent implements OnInit {
   @Input() results: any[] = [];
-
-  constructor() { }
+  @Input() url = '';
+  @Input() hasResponse = false;
+  @HostBinding('class.filled') get result() { return this.hasResponse && this.url; }
 
   ngOnInit(): void { }
 }

@@ -14,17 +14,25 @@ import { DataAccessPuppeteerModule, PuppeteerService } from '@evaluator/data-acc
 })
 export class HomeComponent implements OnInit {
   results: string[] = [];
+  url = '';
+  hasResponse = false;
 
   constructor(private readonly puppeteerService: PuppeteerService, private readonly changeDetectorRef: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.puppeteerService.getMessage()?.subscribe((message) => {
-      this.results.push(message);
+      if (message) {
+        this.results.push(message);
+      }
+      this.hasResponse = true;
       this.changeDetectorRef.detectChanges();
     });
   }
 
   send(message: string) {
+    this.results = [];
+    this.hasResponse = false;
+    this.url = message;
     this.puppeteerService.send(message);
   }
 }

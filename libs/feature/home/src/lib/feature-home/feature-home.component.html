@@ -1,3 +1,8 @@
 <h1>Evaluator</h1>
 <evaluator-search-bar (send)="send($event)"></evaluator-search-bar>
-<evaluator-results [results]="results"></evaluator-results>
+<evaluator-results
+  [hidden]="!hasResponse"
+  [results]="results"
+  [url]="url"
+  [hasResponse]="hasResponse"
+></evaluator-results>

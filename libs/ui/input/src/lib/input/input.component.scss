@@ -10,10 +10,16 @@ input {
   color: white;
   font-family: 'Orbitron', sans-serif;
   text-align: center;
+  &.filled,
+  &:focus,
   &:hover,
   &:focus-visible {
     transition: 100ms box-shadow cubic-bezier(0, 0, 0.2, 1);
     box-shadow: #99f3ff 0px 0px 7px 4px;
     outline: none;
+  }
+  &.invalid {
+    border-color: red;
+    box-shadow: red 0px 0px 7px 4px;
   }
 }

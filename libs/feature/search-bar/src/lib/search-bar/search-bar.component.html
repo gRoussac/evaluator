@@ -1,9 +1,10 @@
 <div class="search-bar">
   <evaluator-input
-    [(value)]="inputValue"
-    (enter)="onSend(inputValue)"
+    [(value)]="value"
+    [(isValid)]="isValid"
+    (enter)="onSend(value)"
   ></evaluator-input>
-  <button (click)="onSend(inputValue)">
+  <button (click)="onSend(value)">
     <i class="material-icons">cloud_upload</i>
     <span>evaluate</span>
   </button>

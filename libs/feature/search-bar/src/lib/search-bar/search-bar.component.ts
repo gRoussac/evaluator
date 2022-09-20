@@ -9,12 +9,18 @@ import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output } from
 export class SearchBarComponent implements OnInit {
   @Output() send = new EventEmitter<string>;
 
-  inputValue = '';
+  value = '';
+  isValid = false;
+  private _value = ''; // memoize value to compare
 
   ngOnInit(): void { }
 
-  onSend(message: string) {
-    this.send.emit(message);
+  onSend(value: string) {
+    console.log(this.isValid, value, value != this._value);
+    if (this.isValid && value && (value != this._value)) {
+      this.send.emit(value);
+      this._value = value;
+    }
   }
 
 }

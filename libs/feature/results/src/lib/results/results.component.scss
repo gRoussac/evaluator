@@ -1,20 +1,33 @@
 :host {
+  display: block;
   margin: 0px auto;
   margin-top: 25px;
-  display: block;
   width: 100%;
   border-radius: 10px;
-  border: 2px solid #99f3ff;
+  border: 1px solid #99f3ff;
   border-radius: 10px;
   box-sizing: border-box;
   color: #fff;
+  &.filled {
+    border-width: 2px;
+    transition: 100ms box-shadow cubic-bezier(0, 0, 0.2, 1);
+    box-shadow: #99f3ff 0px 0px 7px 4px;
+  }
 }
 
-pre {
-  white-space: unset;
-  overflow-wrap: break-word;
+.pre {
+  display: block;
+  unicode-bidi: embed;
+  font-family: monospace;
+  white-space: pre;
+  white-space: pre-wrap;
+  word-break: break-all;
 }
 
 ul {
   padding-right: 40px;
+}
+
+.no-result {
+  text-align: center;
 }

@@ -9,10 +9,10 @@ import * as express from 'express';
 import { PuppeteerResolver } from './puppeteer';
 import { WebSocketServer } from 'ws';
 import * as http from 'http';
-dotenv.config({ override: true });
-const express_app = express();
-// const testURL = 'https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_eval';
 
+dotenv.config({ override: true });
+
+const express_app = express();
 
 // The Express app is exported so that it can be used by appless Functions.
 export function app(): express.Express {
@@ -43,19 +43,16 @@ export function app(): express.Express {
   return express_app;
 }
 
+// Start up the Node app
 function run(): void {
   const port = process.env['PORT'] || 4000;
-
-  // Start up the Node app
   const express_app = app();
   const server = http.createServer(express_app);
   const wss = new WebSocketServer({ server });
-
   wss.on('connection', (ws) => {
-    ws.on('message', (message) => {
+    ws.on('message', async (message) => {
       const url = JSON.parse(message.toString());
-      PuppeteerResolver.resolveSite(url, ws);
-      // ws.send(JSON.stringify(message.toString()));
+      await PuppeteerResolver.resolveWs(url, ws);
     });
   });
   server.listen(port, () => {

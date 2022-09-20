@@ -26,4 +26,9 @@ button {
   height: 15px;
   margin: 25px auto;
   border-radius: 5px;
+  outline: none;
+  &:hover {
+    transition: 100ms box-shadow cubic-bezier(0, 0, 0.2, 1);
+    box-shadow: #99f3ff 0px 0px 7px 4px;
+  }
 }

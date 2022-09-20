@@ -3,7 +3,7 @@ import { Inject, PLATFORM_ID } from '@angular/core';
 import { InjectionToken } from '@angular/core';
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { map, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: null
@@ -23,13 +23,12 @@ export class PuppeteerService {
   }
 
   getMessage(): Observable<string> | undefined {
-    return this.myWebSocket?.asObservable().pipe(map((message) => {
-      console.log(message);
-      return message;
-    }));
+    return this.myWebSocket?.asObservable();
   }
 
   send(message: string): void {
-    this.myWebSocket?.next(message);
+    if (message) {
+      this.myWebSocket?.next(message);
+    }
   };
 }

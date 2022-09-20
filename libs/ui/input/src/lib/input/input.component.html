@@ -1,8 +1,23 @@
 <input
+  #input
+  id="url"
   type="url"
+  minlength="7"
+  maxlength="80"
   placeholder="Enter a URL"
   autocapitalize="off"
   spellcheck="false"
   (change)="onChange($event)"
+  (blur)="onEnter()"
   (keyup.enter)="onEnter()"
+  [ngClass]="{ filled: value, invalid: value && !isValid }"
+  required
 />
+
+<!-- <datalist id="defaultURLs">
+  <option value="https://developer.mozilla.org/"></option>
+  <option value="http://www.google.com/"></option>
+  <option value="http://www.microsoft.com/"></option>
+  <option value="https://www.mozilla.org/"></option>
+  <option value="http://w3.org/"></option>
+</datalist> -->

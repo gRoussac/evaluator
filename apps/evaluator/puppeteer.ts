@@ -3,50 +3,39 @@ import * as puppeteer from 'puppeteer';
 import template, { preg_expression, START } from "./eval";
 import { EventEmitter, Injectable } from '@angular/core';
 import * as Crypto from 'crypto';
-
+import * as WebSocket from 'ws';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: null
 })
 export class PuppeteerResolver {
-
-  static get_url(req: Request | string): string {
-    let testURL: string;
-    if (req instanceof Request) {
-      const url = new URL(req.url);
-      testURL = url.searchParams.get('url') || '';
-    } else {
-      testURL = req.toString();
-    }
-    return testURL;
-  }
+  private static readonly url_not_valid = 'not a valid url?';
+  private static readonly parse_failure = 'parsing failure';
 
   static async resolve(req: Request, res: Response, next: NextFunction) {
+    const url = req.query['url']?.toString() || '';
+    if (!isValidHttpUrl(url)) {
+      res.status(400).send([PuppeteerResolver.url_not_valid]);
+      return;
+    }
     try {
       const puppet = new Puppet();
-      res.write('[');
-      puppet.result$.subscribe(result => {
-        const key = Crypto.createHash('sha256').update(result).digest('hex');
-        const test = {
-          [key]: result
-        };
-        console.log(test);
-        res.write(JSON.stringify(test));
-        res.write(',');
-      });
-      await puppet.goto(PuppeteerResolver.get_url(req));
+      await puppet.goto(url);
       await puppet.close();
-      res.write(']');
-      res.send();
+      res.status(200).send(puppet.result);
     }
     catch (error) {
+      res.status(500).send([PuppeteerResolver.parse_failure, error?.toString()]);
       return next(error);
     }
-
-    // res.status(200).send(result);
   }
 
-  static async resolveSite(url: string, ws: any) {
+  static async resolveWs(url: string, ws: WebSocket) {
+    if (!isValidHttpUrl(url)) {
+      ws.send(JSON.stringify(false));
+      //ws.send(JSON.stringify(PuppeteerResolver.url_not_valid));
+      return;
+    }
     try {
       const puppet = new Puppet();
       puppet.result$.subscribe(result => {
@@ -55,11 +44,14 @@ export class PuppeteerResolver {
           'sha256': key,
           'result': result
         };
-        console.log(obj);
         ws.send(JSON.stringify(obj));
       });
       await puppet.goto(url);
       await puppet.close();
+      if (!puppet.result.length) {
+        console.log(puppet.result);
+        ws.send(JSON.stringify(false));
+      }
     }
     catch (error) {
       return error;
@@ -70,10 +62,8 @@ export class PuppeteerResolver {
 class Puppet {
 
   result: string[] = [];
-
-  private browser: Promise<puppeteer.Browser>;
-
   result$: EventEmitter<string> = new EventEmitter();
+  private browser: Promise<puppeteer.Browser>;
 
   constructor() {
     this.browser = this.getBrowser();
@@ -86,7 +76,6 @@ class Puppet {
   async goto(url: string): Promise<puppeteer.HTTPResponse | null> {
     const page = await this.getNewPage();
     this.setListener(page);
-    console.log(url);
     return page.goto(url);
   }
 
@@ -111,12 +100,22 @@ class Puppet {
       const execution = consoleObj.text();
       if (!execution.includes(START))
         return;
+      console.log(consoleObj.location(), consoleObj.args(), consoleObj.stackTrace(), consoleObj.type());
       const eval_match = preg_expression.exec(execution)?.pop();
       if (eval_match) {
+        this.result.push(eval_match);
         this.result$.emit(eval_match);
-        //this.result.push(eval_match);
-        //console.log(eval_match);
       }
     });
   }
+}
+
+function isValidHttpUrl(url_test: string) {
+  let url;
+  try {
+    url = new URL(url_test);
+  } catch (_) {
+    return false;
+  }
+  return url.protocol === "http:" || url.protocol === "https:";
 }
