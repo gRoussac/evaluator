@@ -21,7 +21,7 @@ export class InputComponent implements OnInit {
   onChange(event: Event) {
     const element = (event.target as HTMLInputElement);
     this.isValidChange.emit(element.checkValidity());
-    this.valueChange.emit(element.value);
+    this.valueChange.emit(element.value.trim());
   }
 
   onEnter() {

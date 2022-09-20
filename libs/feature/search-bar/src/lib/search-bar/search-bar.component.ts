@@ -16,7 +16,6 @@ export class SearchBarComponent implements OnInit {
   ngOnInit(): void { }
 
   onSend(value: string) {
-    console.log(this.isValid, value, value != this._value);
     if (this.isValid && value && (value != this._value)) {
       this.send.emit(value);
       this._value = value;

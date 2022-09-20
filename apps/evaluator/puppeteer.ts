@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import * as puppeteer from 'puppeteer';
-import template, { preg_expression, START } from "./eval";
+import template, { START } from "./eval";
 import { EventEmitter, Injectable } from '@angular/core';
 import * as Crypto from 'crypto';
 import * as WebSocket from 'ws';
@@ -39,10 +39,13 @@ export class PuppeteerResolver {
     try {
       const puppet = new Puppet();
       puppet.result$.subscribe(result => {
-        const key = Crypto.createHash('sha256').update(result).digest('hex');
+        console.log();
+        const key = Crypto.createHash('sha256').update(result.text()).digest('hex');
+        console.log(key);
         const obj = {
           'sha256': key,
-          'result': result
+          'result': result.text().replace(START, '').trim(),
+          'stacktrace': result.stackTrace()
         };
         ws.send(JSON.stringify(obj));
       });
@@ -61,8 +64,8 @@ export class PuppeteerResolver {
 
 class Puppet {
 
-  result: string[] = [];
-  result$: EventEmitter<string> = new EventEmitter();
+  result: puppeteer.ConsoleMessage[] = [];
+  result$: EventEmitter<puppeteer.ConsoleMessage> = new EventEmitter();
   private browser: Promise<puppeteer.Browser>;
 
   constructor() {
@@ -98,14 +101,12 @@ class Puppet {
     this.result = [];
     page.on('console', (consoleObj: puppeteer.ConsoleMessage) => {
       const execution = consoleObj.text();
-      if (!execution.includes(START))
+      if (!execution.includes(START)) {
         return;
-      console.log(consoleObj.location(), consoleObj.args(), consoleObj.stackTrace(), consoleObj.type());
-      const eval_match = preg_expression.exec(execution)?.pop();
-      if (eval_match) {
-        this.result.push(eval_match);
-        this.result$.emit(eval_match);
       }
+      console.log(consoleObj.stackTrace());
+      this.result.push(consoleObj);
+      this.result$.emit(consoleObj);
     });
   }
 }

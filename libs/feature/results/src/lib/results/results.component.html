@@ -1,7 +1,11 @@
-<ul [hidden]="!results.length">
-  <li *ngFor="let result of results">
-    <h4>{{ result.sha256 }}</h4>
-    <div class="pre">{{ result.result }}</div>
+<ul *ngIf="results.length">
+  <li *ngFor="let result of results; let i = index">
+    <h4>{{ i }} - ID: {{ result.sha256 }}</h4>
+    <a (click)="openStackTrace($event, i)" href="">stacktrace</a>
+    <span class="pre" *ngIf="isOpenStackTrace(i)">
+      {{ result.stacktrace | json }}
+    </span>
+    <span class="pre">{{ result.result }}</span>
   </li>
 </ul>
 
