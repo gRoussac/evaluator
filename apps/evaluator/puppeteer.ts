@@ -40,9 +40,11 @@ export class PuppeteerResolver {
       const puppet = new Puppet();
       puppet.result$.subscribe(result => {
         const key = Crypto.createHash('sha256').update(result.text()).digest('hex');
-        const stacktrace = result.stackTrace().slice(-1)[0];
-        const caller = stacktrace['url'];
-        const line = (stacktrace['lineNumber'] || 0) + 1;
+        const stacktrace = result.stackTrace();
+        const lastCaller = stacktrace.slice(-1)[0];
+        const caller = lastCaller['url'];
+        lastCaller['lineNumber'] = (lastCaller['lineNumber'] || 0) + 1;
+        const line = lastCaller['lineNumber'];
         const obj = {
           'sha256': key,
           'result': result.text().replace(START, '').trim(),

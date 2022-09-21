@@ -15,11 +15,13 @@
         >{{ isOpenStackTrace(i) ? '-' : '+' }} stacktrace</span
       >
     </span>
-    <span class="pre stacktrace" *ngIf="isOpenStackTrace(i)"
-      >{{ result.stacktrace | json }}
-    </span>
+    <span
+      *ngIf="isOpenStackTrace(i)"
+      class="pre stacktrace"
+      [innerHtml]="result.stacktrace"
+    ></span>
     <div class="pre overflow-y">
-      <code>{{ result.result }}</code>
+      <code [innerHtml]="result.result"></code>
     </div>
     <h4>ID:&nbsp;{{ result.sha256 }}</h4>
     <hr *ngIf="i !== results.length - 1" />

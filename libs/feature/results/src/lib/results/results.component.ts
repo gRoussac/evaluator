@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostBinding, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, HostBinding, Input, QueryList, ViewChildren } from '@angular/core';
 // import { fadeInOut } from './fadeInOut';
 
 @Component({
@@ -10,20 +10,19 @@ import { ChangeDetectionStrategy, Component, HostBinding, Input, OnInit } from '
   // ],
   changeDetection: ChangeDetectionStrategy.Default,
 })
-export class ResultsComponent implements OnInit {
+export class ResultsComponent {
   @Input() results: any[] = [];
   @Input() url = '';
   @Input() hasResponse = false;
   @HostBinding('class.filled') get result() { return this.hasResponse && this.url; }
+  @ViewChildren('code') someCode: QueryList<ElementRef> = new QueryList<ElementRef>;
 
   openStackTraces: boolean[] = [];
-
-  ngOnInit(): void { };
 
   openStackTrace(event: Event, index: number): void {
     event.preventDefault();
     this.openStackTraces[index] = !this.openStackTraces[index];
-  }
+  };
 
   isOpenStackTrace(index: number): boolean {
     return this.openStackTraces[index];
