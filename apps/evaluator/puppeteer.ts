@@ -39,20 +39,19 @@ export class PuppeteerResolver {
     try {
       const puppet = new Puppet();
       puppet.result$.subscribe(result => {
-        console.log();
         const key = Crypto.createHash('sha256').update(result.text()).digest('hex');
-        console.log(key);
+        const stacktrace = result.stackTrace();
         const obj = {
           'sha256': key,
           'result': result.text().replace(START, '').trim(),
-          'stacktrace': result.stackTrace()
+          'stacktrace': stacktrace,
+          'caller': stacktrace.slice(-1)[0]['url']
         };
         ws.send(JSON.stringify(obj));
       });
       await puppet.goto(url);
       await puppet.close();
       if (!puppet.result.length) {
-        console.log(puppet.result);
         ws.send(JSON.stringify(false));
       }
     }
@@ -104,7 +103,6 @@ class Puppet {
       if (!execution.includes(START)) {
         return;
       }
-      console.log(consoleObj.stackTrace());
       this.result.push(consoleObj);
       this.result$.emit(consoleObj);
     });

@@ -1,14 +1,17 @@
-<ul *ngIf="results.length">
+<ul *ngIf="results?.length">
   <li *ngFor="let result of results; let i = index">
-    <h4>{{ i }} - ID: {{ result.sha256 }}</h4>
-    <a (click)="openStackTrace($event, i)" href="">stacktrace</a>
+    <h4>{{ i + 1 }} - ID: {{ result.sha256 }}</h4>
+    <span class="d-flex justify-space-between">
+      <a (click)="openStackTrace($event, i)" href="">stacktrace</a>
+      <a [href]="result.caller" target="_blank">{{ result.caller }}</a>
+    </span>
     <span class="pre" *ngIf="isOpenStackTrace(i)">
       {{ result.stacktrace | json }}
     </span>
-    <span class="pre">{{ result.result }}</span>
+    <span class="pre overflow-y">{{ result.result }}</span>
   </li>
 </ul>
 
-<h3 *ngIf="hasResponse && !results.length && url" class="no-result">
+<h3 *ngIf="hasResponse && !results?.length && url" class="no-result">
   No Eval run on {{ url }}
 </h3>

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostBinding, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, Input, OnInit, SimpleChanges } from '@angular/core';
 import { fadeInOut } from './fadeInOut';
 
 @Component({

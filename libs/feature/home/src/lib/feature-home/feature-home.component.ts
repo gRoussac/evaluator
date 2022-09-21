@@ -13,7 +13,7 @@ import { DataAccessPuppeteerModule, PuppeteerService } from '@evaluator/data-acc
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit {
-  results: string[] = [];
+  results: any[] = [];
   url = '';
   hasResponse = false;
 
@@ -21,9 +21,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.puppeteerService.getMessage()?.subscribe((message) => {
-      if (message) {
-        this.results.push(message);
-      }
+      message && this.results.push(message);
       this.hasResponse = true;
       this.changeDetectorRef.detectChanges();
     });

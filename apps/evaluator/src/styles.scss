@@ -5,8 +5,6 @@ body {
   background: black;
   font-family: 'Orbitron', sans-serif;
   margin: 0;
-  min-height: calc(100vh - 40px);
-  padding: 20px 0;
 }
 
 .material-icons {
@@ -23,4 +21,8 @@ body {
   direction: ltr;
   -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
+}
+
+.d-flex {
+  display: flex;
 }

@@ -7,6 +7,9 @@
   width: 100%;
   position: relative;
   box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 button {
@@ -24,7 +27,6 @@ button {
   cursor: pointer;
   padding: 30px;
   height: 15px;
-  margin: 25px auto;
   border-radius: 5px;
   outline: none;
   &:hover {
