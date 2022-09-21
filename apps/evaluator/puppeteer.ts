@@ -40,12 +40,14 @@ export class PuppeteerResolver {
       const puppet = new Puppet();
       puppet.result$.subscribe(result => {
         const key = Crypto.createHash('sha256').update(result.text()).digest('hex');
-        const stacktrace = result.stackTrace();
+        const stacktrace = result.stackTrace().slice(-1)[0];
+        const caller = stacktrace['url'];
+        const line = (stacktrace['lineNumber'] || 0) + 1;
         const obj = {
           'sha256': key,
           'result': result.text().replace(START, '').trim(),
           'stacktrace': stacktrace,
-          'caller': stacktrace.slice(-1)[0]['url']
+          'caller': [caller, line].join('#L')
         };
         ws.send(JSON.stringify(obj));
       });
