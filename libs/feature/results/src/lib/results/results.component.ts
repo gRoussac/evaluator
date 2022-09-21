@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, HostBinding, Input, QueryList, ViewChildren } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
 // import { fadeInOut } from './fadeInOut';
 
 @Component({
@@ -12,10 +12,18 @@ import { ChangeDetectionStrategy, Component, ElementRef, HostBinding, Input, Que
 })
 export class ResultsComponent {
   @Input() results: any[] = [];
-  @Input() url = '';
+  @Input()
+  set url(value: string) {
+    this._url = value;
+    this.openStackTraces = [];
+  }
+  get url() {
+    return this._url;
+  }
   @Input() hasResponse = false;
   @HostBinding('class.filled') get result() { return this.hasResponse && this.url; }
-  @ViewChildren('code') someCode: QueryList<ElementRef> = new QueryList<ElementRef>;
+
+  private _url = '';
 
   openStackTraces: boolean[] = [];
 
