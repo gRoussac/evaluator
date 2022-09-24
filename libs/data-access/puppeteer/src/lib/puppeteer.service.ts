@@ -4,7 +4,8 @@ import { InjectionToken } from '@angular/core';
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { map, Observable } from 'rxjs';
-import hljs from 'highlight.js';
+import { HIGHLIGHT_WEBWORKER_FACTORY } from '@evaluator/util-hightlight-webworker';
+import PromiseWorker from 'promise-worker';
 
 @Injectable({
   providedIn: null
@@ -14,22 +15,29 @@ export class PuppeteerService {
   private isBrowser: boolean = isPlatformBrowser(this.platformId);
   private window: Window;
   private myWebSocket: WebSocketSubject<any> | undefined = undefined;
+  private hightlightWebworker: Worker | undefined = undefined;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: InjectionToken<Record<string, unknown>>,
-    @Inject(DOCUMENT) private document: Document) {
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: InjectionToken<Record<string, unknown>>,
+    @Inject(DOCUMENT) private document: Document,
+    @Inject(HIGHLIGHT_WEBWORKER_FACTORY) private highlightWebworkerFactory: () => Worker
+  ) {
     this.window = this.document.defaultView as Window;
     if (this.isBrowser) {
       this.myWebSocket = webSocket(this.window.location.href.replace('http', 'ws').replace('4200', '4000'));
+      this.hightlightWebworker = this.highlightWebworkerFactory();
     }
   }
 
-  getMessage(): Observable<any> | undefined {
-    return this.myWebSocket?.asObservable().pipe(map((message) => {
-      if (!message) {
+  getMessage() {
+    return this.myWebSocket?.asObservable().pipe(map(async (message) => {
+      if (!message || !this.hightlightWebworker) {
         return message;
       }
-      message['result'] = message['result'] && hljs.highlight('javascript', message['result']).value;
-      message['stacktrace'] = message['stacktrace'] && hljs.highlight('json', JSON.stringify(message['stacktrace'], null, 2)).value;
+      const promiseWorker = new PromiseWorker(this.hightlightWebworker);
+      message = await promiseWorker.postMessage(message).catch(err => {
+        console.log(err);
+      });
       return message;
     }));
   }

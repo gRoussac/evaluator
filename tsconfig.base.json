@@ -15,6 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@evaluator/util-hightlight-webworker": [
+        "libs/util/hihlight-webworker/src/index.ts"
+      ],
       "@evaluator/data-access-puppeteer": [
         "libs/data-access/puppeteer/src/index.ts"
       ],

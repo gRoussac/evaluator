@@ -20,8 +20,8 @@ export class HomeComponent implements OnInit {
   constructor(private readonly puppeteerService: PuppeteerService, private readonly changeDetectorRef: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.puppeteerService.getMessage()?.subscribe((message) => {
-      message && this.results.push(message);
+    this.puppeteerService.getMessage()?.subscribe(async (message: Promise<unknown>) => {
+      this.results.push(await message);
       this.hasResponse = true;
       this.changeDetectorRef.detectChanges();
     });

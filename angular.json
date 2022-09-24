@@ -9,6 +9,7 @@
     "feature-home": "libs/feature/home",
     "feature-results": "libs/feature/results",
     "feature-search-bar": "libs/feature/search-bar",
-    "ui-input": "libs/ui/input"
+    "ui-input": "libs/ui/input",
+    "util-hihlight-webworker": "libs/util/hihlight-webworker"
   }
 }

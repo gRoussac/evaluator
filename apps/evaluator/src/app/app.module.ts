@@ -4,6 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { RouterModule } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HIGHLIGHT_WEBWORKER_FACTORY } from '@evaluator/util-hightlight-webworker';
 
 @NgModule({
   declarations: [AppComponent],
@@ -21,7 +22,17 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
       { initialNavigation: 'enabledBlocking' }
     ),
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HIGHLIGHT_WEBWORKER_FACTORY,
+      useValue: function (): Worker {
+        return new Worker(new URL('libs/util/hihlight-webworker/src/lib/util-hihlight-webworker', import.meta.url), {
+          name: 'highlight.worker',
+          type: 'module',
+        });
+      },
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule { }
