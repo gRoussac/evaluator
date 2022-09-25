@@ -21,7 +21,10 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.puppeteerService.getMessage()?.subscribe(async (message: Promise<unknown>) => {
-      this.results.push(await message);
+      const result = await message;
+      if (result) {
+        this.results.push(await message);
+      }
       this.hasResponse = true;
       this.changeDetectorRef.detectChanges();
     });

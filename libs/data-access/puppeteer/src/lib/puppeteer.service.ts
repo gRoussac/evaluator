@@ -24,15 +24,15 @@ export class PuppeteerService {
   ) {
     this.window = this.document.defaultView as Window;
     if (this.isBrowser) {
-      this.myWebSocket = webSocket(this.window.location.href.replace('http', 'ws').replace('4200', '4000'));
+      this.connect();
       this.hightlightWebworker = this.highlightWebworkerFactory();
     }
   }
 
-  getMessage() {
+  getMessage(): Observable<Promise<unknown | boolean>> | undefined {
     return this.myWebSocket?.asObservable().pipe(map(async (message) => {
       if (!message || !this.hightlightWebworker) {
-        return message;
+        return false;
       }
       const promiseWorker = new PromiseWorker(this.hightlightWebworker);
       message = await promiseWorker.postMessage(message).catch(err => {
@@ -43,8 +43,16 @@ export class PuppeteerService {
   }
 
   send(message: string): void {
+    //   console.log(this.myWebSocket?.closed);
+    if (this.myWebSocket?.closed) {
+      this.connect();
+    }
     if (message) {
       this.myWebSocket?.next(message);
     }
-  };
+  }
+
+  private connect() {
+    this.myWebSocket = webSocket(this.window.location.href.replace('http', 'ws').replace('4200', '4000'));
+  }
 }
