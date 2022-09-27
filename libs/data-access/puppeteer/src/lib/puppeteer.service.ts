@@ -7,6 +7,7 @@ import { map, Observable } from 'rxjs';
 import { HIGHLIGHT_WEBWORKER_FACTORY } from '@evaluator/util-hightlight-webworker';
 import PromiseWorker from 'promise-worker';
 
+
 @Injectable({
   providedIn: null
 })
@@ -14,45 +15,56 @@ export class PuppeteerService {
 
   private isBrowser: boolean = isPlatformBrowser(this.platformId);
   private window: Window;
-  private myWebSocket: WebSocketSubject<any> | undefined = undefined;
-  private hightlightWebworker: Worker | undefined = undefined;
+  private url: URL;
+  private webSocket: WebSocketSubject<any> | undefined = undefined;
+  private webworker: Worker | undefined = undefined;
+  private hightlightWebworker: PromiseWorker | undefined = undefined;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: InjectionToken<Record<string, unknown>>,
     @Inject(DOCUMENT) private document: Document,
-    @Inject(HIGHLIGHT_WEBWORKER_FACTORY) private highlightWebworkerFactory: () => Worker
+    @Inject(HIGHLIGHT_WEBWORKER_FACTORY) private highlightWebworkerFactory: () => [Worker, PromiseWorker]
   ) {
     this.window = this.document.defaultView as Window;
-    if (this.isBrowser) {
-      this.connect();
-      this.hightlightWebworker = this.highlightWebworkerFactory();
-    }
+    this.url = new URL(this.window.location.href.replace('http', 'ws'));
+  }
+
+  private connectWebSocket() {
+    this.webSocket = webSocket(this.url.origin.replace('4200', '4000'));
   }
 
   getMessage(): Observable<Promise<unknown | boolean>> | undefined {
-    return this.myWebSocket?.asObservable().pipe(map(async (message) => {
-      if (!message || !this.hightlightWebworker) {
-        return false;
-      }
-      const promiseWorker = new PromiseWorker(this.hightlightWebworker);
-      message = await promiseWorker.postMessage(message).catch(err => {
+    return this.webSocket?.pipe(map(async (message) => {
+      this.activateWorker();
+      message = await this.hightlightWebworker?.postMessage(message).catch((err: unknown) => {
         console.log(err);
       });
+      if (!message) {
+        this.terminateWorker();
+        this.webSocket?.complete();
+      }
       return message;
     }));
   }
 
-  send(message: string): void {
-    //   console.log(this.myWebSocket?.closed);
-    if (this.myWebSocket?.closed) {
-      this.connect();
-    }
-    if (message) {
-      this.myWebSocket?.next(message);
+  sendMessage(message: string): void {
+    if (this.isBrowser && message) {
+      this.connectWebSocket();
+      this.webSocket?.next(message);
     }
   }
 
-  private connect() {
-    this.myWebSocket = webSocket(this.window.location.href.replace('http', 'ws').replace('4200', '4000'));
+  activateWorker() {
+    if (this.webworker) { return; }
+    const factory = this.highlightWebworkerFactory();
+    this.webworker = factory[0] as Worker;
+    this.hightlightWebworker = factory[1] as PromiseWorker;
   }
+
+  terminateWorker() {
+    if (!this.webworker) { return; }
+    this.webworker.terminate();
+    delete (this.webworker);
+  }
+
 }

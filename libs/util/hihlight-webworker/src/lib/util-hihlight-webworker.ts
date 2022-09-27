@@ -11,4 +11,3 @@ import registerPromiseWorker from 'promise-worker/register';
 registerPromiseWorker(function (event: MessageEvent) {
   return highlight(event);
 });
-console.log("addEventListener");

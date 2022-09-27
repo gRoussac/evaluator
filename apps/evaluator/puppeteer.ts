@@ -38,26 +38,34 @@ export class PuppeteerResolver {
     }
     try {
       const puppet = new Puppet();
-      puppet.result$.subscribe(result => {
-        const key = Crypto.createHash('sha256').update(result.text()).digest('hex');
-        const stacktrace = result.stackTrace();
-        const lastCaller = stacktrace.slice(-1)[0];
-        const caller = lastCaller['url'];
-        lastCaller['lineNumber'] = (lastCaller['lineNumber'] || 0) + 1;
-        const line = lastCaller['lineNumber'];
+      puppet.result$.subscribe(message => {
+        const result = message.text().replace(START, '').trim();
+        if (result.length < 2) {
+          return;
+        }
+        const sha256 = Crypto.createHash('sha256').update(message.text()).digest('hex'),
+          stacktrace = message.stackTrace(),
+          firstcaller = stacktrace.slice(-1)[0],
+          lastcaller = stacktrace.slice()[0];
+        firstcaller['lineNumber'] = (firstcaller['lineNumber'] || 0) + 1;
+        const line = firstcaller['lineNumber'];
+        const caller = [firstcaller['url'], line].join('#L');
+        // Remove our proper script
+        if (lastcaller['lineNumber'] === 4 && lastcaller['columnNumber'] === 10) {
+          stacktrace.shift();
+        }
         const obj = {
-          'sha256': key,
-          'result': result.text().replace(START, '').trim(),
-          'stacktrace': stacktrace,
-          'caller': [caller, line].join('#L')
+          sha256,
+          result,
+          stacktrace,
+          caller
         };
         ws.send(JSON.stringify(obj));
       });
       await puppet.goto(url);
       await puppet.close();
-      if (!puppet.result.length) {
-        ws.send(JSON.stringify(false));
-      }
+      ws.send(JSON.stringify(false));
+      ws.close();
     }
     catch (error) {
       return error;
@@ -90,7 +98,7 @@ class Puppet {
     const page = await browser.newPage();
     await page.evaluateOnNewDocument(template);
     await page.setUserAgent(
-      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36'
+      'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36'
     );
     return page;
   }

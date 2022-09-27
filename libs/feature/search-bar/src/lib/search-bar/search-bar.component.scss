@@ -2,6 +2,10 @@
   min-width: 300px;
   width: 100%;
   max-width: 664px;
+  margin-bottom: 45px;
+  @media (max-width: 768px) {
+    margin-bottom: 30px;
+  }
 }
 .search-bar {
   width: 100%;

@@ -1,7 +1,11 @@
 <h1>Evaluator</h1>
+<div class="progress-wrapper">
+  <div class="progress" *ngIf="!hasResponse && url">
+    <div class="progress-bar progress-bar-striped progress-bar-animated"></div>
+  </div>
+</div>
 <evaluator-search-bar (send)="send($event)"></evaluator-search-bar>
 <evaluator-results
-  [hidden]="!hasResponse"
   [results]="results"
   [url]="url"
   [hasResponse]="hasResponse"
