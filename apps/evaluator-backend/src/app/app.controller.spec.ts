@@ -14,10 +14,10 @@ describe('AppController', () => {
   });
 
   describe('getData', () => {
-    it('should return "Welcome to api/phantomjs!"', () => {
+    it('should return "Welcome to evaluator-backend!"', () => {
       const appController = app.get<AppController>(AppController);
       expect(appController.getData()).toEqual({
-        message: 'Welcome to api/phantomjs!',
+        message: 'Welcome to evaluator-backend!',
       });
     });
   });

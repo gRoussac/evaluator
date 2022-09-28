@@ -14,9 +14,9 @@ describe('AppService', () => {
   });
 
   describe('getData', () => {
-    it('should return "Welcome to api/phantomjs!"', () => {
+    it('should return "Welcome to evaluator-backend!"', () => {
       expect(service.getData()).toEqual({
-        message: 'Welcome to api/phantomjs!',
+        message: 'Welcome to evaluator-backend!',
       });
     });
   });

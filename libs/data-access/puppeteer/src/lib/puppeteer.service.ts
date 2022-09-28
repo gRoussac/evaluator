@@ -26,6 +26,9 @@ export class PuppeteerService {
     @Inject(HIGHLIGHT_WEBWORKER_FACTORY) private highlightWebworkerFactory: () => [Worker, PromiseWorker]
   ) {
     this.window = this.document.defaultView as Window;
+    // console.log(Object.getOwnPropertyNames(String.prototype).filter((p: any) => {
+    //   return typeof String.prototype[p] === 'function';
+    // }));
     this.url = new URL(this.window.location.href.replace('http', 'ws'));
   }
 

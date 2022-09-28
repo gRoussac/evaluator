@@ -3,5 +3,9 @@
     "target": "ws://localhost:4000",
     "secure": false,
     "ws": true
+  },
+  "/api": {
+    "target": "http://localhost:3333",
+    "secure": false
   }
 }

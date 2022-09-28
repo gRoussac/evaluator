@@ -1,0 +1,57 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/evaluator-backend/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/node:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/evaluator-backend",
+        "main": "apps/evaluator-backend/src/main.ts",
+        "tsConfig": "apps/evaluator-backend/tsconfig.app.json",
+        "assets": ["apps/evaluator-backend/src/assets"]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "fileReplacements": [
+            {
+              "replace": "apps/evaluator-backend/src/environments/environment.ts",
+              "with": "apps/evaluator-backend/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "evaluator-backend:build"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "evaluator-backend:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/evaluator-backend/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/evaluator-backend"],
+      "options": {
+        "jestConfig": "apps/evaluator-backend/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": ["evaluator-backend"]
+}

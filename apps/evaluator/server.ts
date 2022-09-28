@@ -9,10 +9,14 @@ import * as express from 'express';
 import { PuppeteerResolver } from './puppeteer';
 import { WebSocketServer } from 'ws';
 import * as http from 'http';
+import { createProxyMiddleware as proxy } from 'http-proxy-middleware';
 
 dotenv.config({ override: true });
 
 const express_app = express();
+
+// Proxy to Nest.js app
+const apiProxy = proxy('/api', { target: 'http://localhost:3333' });
 
 // The Express app is exported so that it can be used by appless Functions.
 export function app(): express.Express {
@@ -28,7 +32,9 @@ export function app(): express.Express {
   express_app.set('views', distFolder);
 
   // Example Express Rest API endpoints
-  express_app.get('/api/*', PuppeteerResolver.resolve);
+  express_app.get('/evaluate/*', PuppeteerResolver.resolve);
+
+  express_app.get('/api/*', apiProxy);
 
   // Serve static files from /browser
   express_app.get('*.*', express.static(distFolder, {

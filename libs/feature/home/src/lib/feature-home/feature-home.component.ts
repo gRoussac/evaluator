@@ -20,7 +20,8 @@ export class HomeComponent implements OnDestroy {
 
   private getMessageSubscription: Subscription = new Subscription();
 
-  constructor(private readonly puppeteerService: PuppeteerService, private readonly changeDetectorRef: ChangeDetectorRef) { }
+  constructor(private readonly puppeteerService: PuppeteerService, private readonly changeDetectorRef: ChangeDetectorRef) {
+  }
 
   private setMessageSubscription() {
     this.getMessageSubscription = this.puppeteerService.getMessage()?.subscribe(async (message: Promise<unknown>) => {
