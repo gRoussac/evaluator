@@ -11,7 +11,7 @@
     "start:api": "nx serve evaluator-backend",
     "start:fe": "nx serve evaluator",
     "build:angular": "nx run-many --target=build --projects=evaluator,evaluator-backend --parallel=true",
-    "build": "npm run dev:ssr && nx run evaluator-backend:build",
+    "build": "npm run build:ssr && nx run evaluator-backend:build",
     "dev:ssr": "nx run evaluator:serve-ssr",
     "build:ssr": "nx build && nx run evaluator:server",
     "serve:ssr": "node dist/evaluator/server/main.js",
