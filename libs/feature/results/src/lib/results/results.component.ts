@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
+import { MessageResult } from '@evaluator/shared-types';
 // import { fadeInOut } from './fadeInOut';
 
 @Component({
@@ -11,7 +12,7 @@ import { ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class ResultsComponent {
-  @Input() results: any[] = [];
+  @Input() results: MessageResult[] = [];
   @Input()
   set url(value: string) {
     this._url = value;

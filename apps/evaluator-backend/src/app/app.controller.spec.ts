@@ -13,10 +13,10 @@ describe('AppController', () => {
     }).compile();
   });
 
-  describe('getData', () => {
+  describe('getFunctions', () => {
     it('should return "Welcome to evaluator-backend!"', () => {
       const appController = app.get<AppController>(AppController);
-      expect(appController.getData()).toEqual({
+      expect(appController.getFunctions()).toEqual({
         message: 'Welcome to evaluator-backend!',
       });
     });

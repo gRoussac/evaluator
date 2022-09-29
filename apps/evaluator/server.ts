@@ -10,6 +10,7 @@ import { PuppeteerResolver } from './puppeteer';
 import { WebSocketServer } from 'ws';
 import * as http from 'http';
 import { createProxyMiddleware as proxy } from 'http-proxy-middleware';
+import { Message } from '@evaluator/shared-types';
 
 dotenv.config({ override: true });
 
@@ -56,9 +57,9 @@ function run(): void {
   const server = http.createServer(express_app);
   const wss = new WebSocketServer({ server });
   wss.on('connection', (ws) => {
-    ws.on('message', async (message) => {
-      const url = JSON.parse(message.toString());
-      await PuppeteerResolver.resolveWs(url, ws);
+    ws.on('message', async (message_raw) => {
+      const message: Message = JSON.parse(message_raw.toString());
+      await PuppeteerResolver.resolveWs(message.url, ws);
     });
   });
   server.listen(port, () => {

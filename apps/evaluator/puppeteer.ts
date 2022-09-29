@@ -4,6 +4,7 @@ import template, { START } from "./eval";
 import { EventEmitter, Injectable } from '@angular/core';
 import * as Crypto from 'crypto';
 import * as WebSocket from 'ws';
+import { MessageResult } from '@evaluator/shared-types';
 
 @Injectable({
   providedIn: null
@@ -38,7 +39,7 @@ export class PuppeteerResolver {
     }
     try {
       const puppet = new Puppet();
-      puppet.result$.subscribe(message => {
+      puppet.result$.subscribe((message: puppeteer.ConsoleMessage) => {
         const result = message.text().replace(START, '').trim();
         if (result.length < 2) {
           return;
@@ -54,7 +55,7 @@ export class PuppeteerResolver {
         if (lastcaller['lineNumber'] === 4 && lastcaller['columnNumber'] === 10) {
           stacktrace.shift();
         }
-        const obj = {
+        const obj: MessageResult = {
           sha256,
           result,
           stacktrace,

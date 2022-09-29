@@ -1,12 +1,22 @@
 <div class="search-bar">
   <evaluator-input
-    [(value)]="value"
+    [(value)]="url"
     [(isValid)]="isValid"
-    (enter)="onSend(value)"
+    (enter)="onSend(url, fn)"
   ></evaluator-input>
-  <button (click)="onSend(value)">
+  <button (click)="onSend(url, fn)">
     <i class="material-icons">cloud_upload</i>
     <span>evaluate</span>
   </button>
-  <!-- <progress-bar hidden=""></progress-bar> -->
+  <select (change)="setFn($event)">
+    <optgroup *ngFor="let key of functionsKeys" [label]="key">
+      <option
+        *ngFor="let func of functions[key]"
+        [value]="func['sha256']"
+        [attr.selected]="func['default'] ? true : null"
+      >
+        {{ func['property'] }}
+      </option>
+    </optgroup>
+  </select>
 </div>

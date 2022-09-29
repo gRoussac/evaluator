@@ -1,0 +1,1 @@
+export type Message = { url: string, fn: string; };

@@ -18,7 +18,7 @@
     <span
       *ngIf="isOpenStackTrace(i)"
       class="pre stacktrace"
-      [innerHtml]="result.stacktrace"
+      [innerHtml]="result.stacktrace_as_string"
     ></span>
     <div class="pre overflow-y">
       <code [innerHtml]="result.result"></code>

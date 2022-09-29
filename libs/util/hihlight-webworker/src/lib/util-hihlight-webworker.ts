@@ -7,7 +7,8 @@
 
 import { highlight } from './util-hihlight';
 import registerPromiseWorker from 'promise-worker/register';
+import { MessageResult } from '@evaluator/shared-types';
 
-registerPromiseWorker(function (event: MessageEvent) {
-  return highlight(event);
+registerPromiseWorker(function (message: MessageResult) {
+  return highlight(message);
 });

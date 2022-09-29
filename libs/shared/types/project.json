@@ -1,0 +1,17 @@
+{
+  "projectType": "library",
+  "sourceRoot": "libs/shared/types/src",
+  "prefix": "evaluator",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/shared/types/**/*.ts",
+          "libs/shared/types/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": ["types"]
+}
