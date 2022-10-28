@@ -1,1 +1,1 @@
-export * from './lib/results.module';
+export * from './lib/results/results.component';

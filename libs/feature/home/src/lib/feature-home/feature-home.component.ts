@@ -1,47 +1,53 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FeatureSearchBarModule } from '@evaluator/feature-search-bar';
-import { ResultsModule } from '@evaluator/feature/results';
+import { SearchBarComponent } from '@evaluator/feature-search-bar';
+import { ResultsComponent } from '@evaluator/feature/results';
 import { DataAccessPuppeteerModule, PuppeteerService } from '@evaluator/data-access-puppeteer';
 import { Subscription } from 'rxjs';
 import { Message, MessageResult } from '@evaluator/shared-types';
+import { ResultsService } from '@evaluator/shared-services';
+
 
 @Component({
   selector: 'evaluator-feature-home',
   standalone: true,
-  imports: [CommonModule, FeatureSearchBarModule, ResultsModule, DataAccessPuppeteerModule],
+  imports: [CommonModule, SearchBarComponent, ResultsComponent, DataAccessPuppeteerModule],
+  providers: [ResultsService],
   templateUrl: './feature-home.component.html',
   styleUrls: ['./feature-home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnDestroy {
-  results: MessageResult[] = [];
-  url = '';
-  hasResponse = false;
+  url!: string;
+  fn!: string;
+  hasResponse!: boolean;
 
   private getMessageSubscription?: Subscription;
 
-  constructor(private readonly puppeteerService: PuppeteerService, private readonly changeDetectorRef: ChangeDetectorRef) {
+  constructor(
+    private readonly puppeteerService: PuppeteerService,
+    private readonly resultsService: ResultsService,
+    private readonly changeDetectorRef: ChangeDetectorRef
+  ) {
   }
 
-  private setMessageSubscription() {
-    this.getMessageSubscription = this.puppeteerService.getMessage()?.subscribe(async (message: Promise<boolean | MessageResult>) => {
+  private sendResults() {
+    this.getMessageSubscription = this.puppeteerService.getMessage().subscribe(async (message: Promise<MessageResult | boolean>) => {
       const result = await message;
-      if (!result) {
-        this.hasResponse = true;
-        this.changeDetectorRef.detectChanges();
-      } else {
-        this.results?.push(result as MessageResult);
-      }
-    }) as Subscription;
+      !result && (this.hasResponse = true) && this.changeDetectorRef.markForCheck();
+      result && this.resultsService.sendResult(result as MessageResult);
+    });
   }
 
   send(message: Message) {
-    this.results = [];
     this.hasResponse = false;
     this.url = message.url;
     this.puppeteerService.sendMessage(message);
-    this.setMessageSubscription();
+    this.sendResults();
+  }
+
+  setFn(fn: string) {
+    fn && (this.fn = fn);
   }
 
   ngOnDestroy(): void {

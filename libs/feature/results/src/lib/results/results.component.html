@@ -1,32 +1,36 @@
-<ul *ngIf="results && results?.length">
-  <li *ngFor="let result of results; let i = index">
-    <span class="justify-space-between">
-      <h4>
-        <span class="d-flex"
-          ><span>{{ i + 1 }}</span
-          >&nbsp;-&nbsp;<a [href]="result.caller" target="_blank">{{
-            result.caller
-          }}</a></span
-        >
-      </h4>
-      <span
-        (click)="openStackTrace($event, i)"
-        (mousedown)="$event.preventDefault()"
-        >{{ isOpenStackTrace(i) ? '-' : '+' }} stacktrace</span
-      >
-    </span>
-    <span
-      *ngIf="isOpenStackTrace(i)"
-      class="pre stacktrace"
-      [innerHtml]="result.stacktrace_as_string"
-    ></span>
-    <div class="pre overflow-y">
-      <code [innerHtml]="result.result"></code>
-    </div>
-    <h4>ID:&nbsp;{{ result.sha256 }}</h4>
-    <hr *ngIf="i !== results.length - 1" />
-  </li>
+<ul *ngIf="results?.length">
+  <ng-container *ngFor="let result of results; let i = index">
+    <ng-container *ngIf="result">
+      <li>
+        <span class="justify-space-between">
+          <h4>
+            <span class="d-flex"
+              ><span>{{ i + 1 }}</span
+              >&nbsp;-&nbsp;<a [href]="result?.caller" target="_blank">{{
+                result?.caller
+              }}</a></span
+            >
+          </h4>
+          <span
+            (click)="openStackTrace($event, i)"
+            (mousedown)="$event.preventDefault()"
+            >{{ isOpenStackTrace(i) ? '-' : '+' }} stacktrace</span
+          >
+        </span>
+        <span
+          *ngIf="isOpenStackTrace(i)"
+          class="pre stacktrace"
+          [innerHtml]="result?.stacktrace_as_string"
+        ></span>
+        <div class="pre overflow-y">
+          <code [innerHtml]="result?.result"></code>
+        </div>
+        <h4>ID:&nbsp;{{ result?.sha256 }}</h4>
+        <hr *ngIf="i !== results.length - 1" />
+      </li>
+    </ng-container>
+  </ng-container>
 </ul>
 <h3 *ngIf="hasResponse && !results?.length && url" class="no-result">
-  No Eval run on {{ url }}
+  No {{ fn }} run on {{ url }}
 </h3>

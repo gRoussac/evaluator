@@ -5,7 +5,6 @@ input {
   width: 100%;
   padding: 30px;
   box-sizing: border-box;
-  border: none;
   font-size: 24px;
   background: black;
   border-radius: 10px;
@@ -13,7 +12,7 @@ input {
   color: white;
   font-family: 'Orbitron', sans-serif;
   text-align: center;
-  &.filled,
+  user-select: all;
   &:focus,
   &:hover,
   &:focus-visible {

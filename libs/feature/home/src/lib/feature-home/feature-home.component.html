@@ -4,9 +4,13 @@
     <div class="progress-bar progress-bar-striped progress-bar-animated"></div>
   </div>
 </div>
-<evaluator-search-bar (send)="send($event)"></evaluator-search-bar>
+<evaluator-search-bar
+  (send)="send($event)"
+  [disabled]="!hasResponse && !!url"
+  (setFn)="setFn($event)"
+></evaluator-search-bar>
 <evaluator-results
-  [results]="results"
   [url]="url"
+  [fn]="fn"
   [hasResponse]="hasResponse"
 ></evaluator-results>

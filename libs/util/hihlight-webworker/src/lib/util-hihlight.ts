@@ -5,8 +5,16 @@ export const highlight = (message: MessageResult) => {
   if (!message) {
     return message;
   }
-  message['result'] = message['result'] && hljs.highlight(message['result'], { language: 'javascript' }).value;
+  message['result'] = message['result'].map(element => {
+    let elementAsString;
+    if (typeof element === 'object') {
+      elementAsString = JSON.stringify(message['result']);
+    } else {
+      elementAsString = element.toString();
+    }
+    return elementAsString && hljs.highlight(elementAsString, { language: 'javascript' }).value;
+  }
+  );
   message['stacktrace_as_string'] = message['stacktrace'] && hljs.highlight(JSON.stringify(message['stacktrace'], null, 2), { language: 'json' }).value;
-  //console.log('highlight', message);
   return message;
 };

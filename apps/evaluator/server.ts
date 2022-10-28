@@ -2,15 +2,15 @@ import * as dotenv from 'dotenv';
 import 'zone.js/dist/zone-node';
 import { APP_BASE_HREF } from '@angular/common';
 import { ngExpressEngine } from '@nguniversal/express-engine';
+import { AppServerModule } from './src/main.server';
 import { existsSync } from 'fs';
 import { join } from 'path';
-import { AppServerModule } from './src/main.server';
 import * as express from 'express';
-import { PuppeteerResolver } from './puppeteer';
 import { WebSocketServer } from 'ws';
 import * as http from 'http';
 import { createProxyMiddleware as proxy } from 'http-proxy-middleware';
 import { Message } from '@evaluator/shared-types';
+import { PuppeteerResolver } from '@evaluator/util-puppeteer';
 
 dotenv.config({ override: true });
 
@@ -23,7 +23,7 @@ const apiProxy = proxy('/api', { target: 'http://localhost:3333' });
 export function app(): express.Express {
   const distFolder = join(process.cwd(), 'dist/evaluator/browser');
   const indexHtml = existsSync(join(distFolder, 'index.original.html')) ? 'index.original.html' : 'index';
-
+  //
   // Our Universal express-engine (found @ https://github.com/angular/universal/tree/main/modules/express-engine)
   express_app.engine('html', ngExpressEngine({
     bootstrap: AppServerModule,
@@ -50,18 +50,24 @@ export function app(): express.Express {
   return express_app;
 }
 
-// Start up the Node app
-function run(): void {
-  const port = process.env['PORT'] || 4000;
-  const express_app = app();
-  const server = http.createServer(express_app);
+function setWebscocketServer(server: http.Server) {
   const wss = new WebSocketServer({ server });
+
   wss.on('connection', (ws) => {
     ws.on('message', async (message_raw) => {
       const message: Message = JSON.parse(message_raw.toString());
-      await PuppeteerResolver.resolveWs(message.url, ws);
+      await PuppeteerResolver.resolveWs(message, ws);
     });
   });
+}
+
+// Start up the Node app
+function run(): void {
+  const port = process.env['PORT'] || 4000;
+  console.log(port);
+  const express_app = app();
+  const server = http.createServer(express_app);
+  setWebscocketServer(server);
   server.listen(port, () => {
     console.log(`Node Express app listening on http://localhost:${port}`);
   });

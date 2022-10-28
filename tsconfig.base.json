@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@evaluator-backend/util-functions": ["libs/util/functions/src/index.ts"],
       "@evaluator/data-access-puppeteer": [
         "libs/data-access/puppeteer/src/index.ts"
       ],
@@ -24,11 +25,13 @@
       "@evaluator/feature-home": ["libs/feature/home/src/index.ts"],
       "@evaluator/feature-search-bar": ["libs/feature/search-bar/src/index.ts"],
       "@evaluator/feature/results": ["libs/feature/results/src/index.ts"],
+      "@evaluator/shared-services": ["libs/shared/services/src/index.ts"],
       "@evaluator/shared-types": ["libs/shared/types/src/index.ts"],
       "@evaluator/ui-input": ["libs/ui/input/src/index.ts"],
       "@evaluator/util-hightlight-webworker": [
         "libs/util/hihlight-webworker/src/index.ts"
-      ]
+      ],
+      "@evaluator/util-puppeteer": ["libs/util/puppeteer/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

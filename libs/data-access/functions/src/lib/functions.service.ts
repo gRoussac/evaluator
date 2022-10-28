@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Fonctions } from '@evaluator/shared-types';
+import { Functions } from '@evaluator/shared-types';
 
 @Injectable({
   providedIn: null
@@ -13,7 +13,7 @@ export class FunctionsService {
 
   constructor(private readonly http: HttpClient) { }
 
-  get(): Observable<Fonctions> {
-    return this.http.get<Fonctions>(`${this.prefix}${this.interface}`);
+  get(): Observable<Functions> {
+    return this.http.get<Functions>(`${this.prefix}${this.interface}`);
   }
 }

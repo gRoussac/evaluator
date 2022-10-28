@@ -1,22 +1,29 @@
-<div class="search-bar">
-  <evaluator-input
-    [(value)]="url"
-    [(isValid)]="isValid"
-    (enter)="onSend(url, fn)"
-  ></evaluator-input>
-  <button (click)="onSend(url, fn)">
-    <i class="material-icons">cloud_upload</i>
-    <span>evaluate</span>
-  </button>
-  <select (change)="setFn($event)">
-    <optgroup *ngFor="let key of functionsKeys" [label]="key">
-      <option
-        *ngFor="let func of functions[key]"
-        [value]="func['sha256']"
-        [attr.selected]="func['default'] ? true : null"
-      >
-        {{ func['property'] }}
-      </option>
-    </optgroup>
-  </select>
+<div class="d-flex flex-col">
+  <div>
+    <select
+      (change)="onFnChange($event)"
+      [attr.disabled]="disabled ? true : null"
+    >
+      <optgroup *ngFor="let key of functionsKeys" [label]="key">
+        <option
+          *ngFor="let func of functions[key]"
+          [value]="func['sha256']"
+          [attr.selected]="func['default'] ? true : null"
+        >
+          {{ func['property'] }}
+        </option>
+      </optgroup>
+    </select>
+  </div>
+  <div class="search-bar">
+    <evaluator-input
+      [(value)]="url"
+      [(isValid)]="isValid"
+      [disabled]="disabled"
+    ></evaluator-input>
+    <button (click)="onSend(url, fn)" [attr.disabled]="disabled ? true : null">
+      <i class="material-icons">cloud_upload</i>
+      <span>evaluate</span>
+    </button>
+  </div>
 </div>

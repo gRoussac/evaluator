@@ -10,8 +10,10 @@
     "feature-home": "libs/feature/home",
     "feature-results": "libs/feature/results",
     "feature-search-bar": "libs/feature/search-bar",
+    "shared-services": "libs/shared/services",
     "shared-types": "libs/shared/types",
     "ui-input": "libs/ui/input",
+    "util-functions": "libs/util/functions",
     "util-hihlight-webworker": "libs/util/hihlight-webworker"
   }
 }

@@ -1,1 +1,1 @@
-export * from './lib/feature-search-bar.module';
+export * from './lib/search-bar/search-bar.component';

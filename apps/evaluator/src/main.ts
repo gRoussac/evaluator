@@ -1,23 +1,35 @@
-import { enableProdMode } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { enableProdMode, ImportedNgModuleProviders, importProvidersFrom, Provider } from '@angular/core';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterModule, Routes } from '@angular/router';
+import { AppComponent } from './app/app.component';
 
-import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 
 if (environment.production) {
   enableProdMode();
 }
 
-function bootstrap() {
-  platformBrowserDynamic()
-  .bootstrapModule(AppModule)
-  .catch((err) => console.error(err));
-};
+const ROUTES: Routes = [
+  {
+    path: '',
+    loadChildren: () =>
+      import('@evaluator/feature-home').then((m) => m.FEATUREHOME_ROUTES),
+  },
+];
 
+const providers: Array<Provider | ImportedNgModuleProviders> = [
+  importProvidersFrom([
+    BrowserAnimationsModule,
+    RouterModule.forRoot(ROUTES)
+  ])
+];
 
- if (document.readyState === 'complete') {
-   bootstrap();
- } else {
-   document.addEventListener('DOMContentLoaded', bootstrap);
- }
- 
+bootstrapApplication(AppComponent, { providers })
+  .then(() => {
+    //
+  })
+  .catch(() => {
+    //
+  });
+

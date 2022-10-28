@@ -1,13 +1,16 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'evaluator-input',
+  standalone: true,
   templateUrl: './input.component.html',
   styleUrls: ['./input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule],
 })
 export class InputComponent implements OnInit {
-
+  @Input() disabled!: boolean;
   @Input() value = '';
   @Output() valueChange = new EventEmitter<string>();
   @Output() enter = new EventEmitter<void>();
