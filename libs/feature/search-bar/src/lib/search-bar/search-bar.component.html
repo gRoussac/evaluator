@@ -1,5 +1,5 @@
 <div class="d-flex flex-col">
-  <div>
+  <div class="relative">
     <select
       (change)="onFnChange($event)"
       [attr.disabled]="disabled ? true : null"
@@ -10,10 +10,11 @@
           [value]="func['sha256']"
           [attr.selected]="func['default'] ? true : null"
         >
-          {{ func['property'] }}
+          {{ key }}.{{ func['property'] }}
         </option>
       </optgroup>
     </select>
+    <i class="material-icons absolute">arrow_drop_down</i>
   </div>
   <div class="search-bar">
     <evaluator-input

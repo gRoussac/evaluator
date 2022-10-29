@@ -103,6 +103,7 @@ li > h4 {
     margin-bottom: 1.33em;
     position: relative;
     top: 0.25em;
+    user-select: none;
     @media (max-width: 768px) {
       font-size: 0.7em;
     }
@@ -127,6 +128,13 @@ hr {
 
 .stacktrace {
   margin-bottom: 20px;
+}
+
+.screenshot {
+  text-align: center;
+  color: #99f3ff;
+  cursor: pointer;
+  user-select: none;
 }
 
 @keyframes progress-bar-stripes {

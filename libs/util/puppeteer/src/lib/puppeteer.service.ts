@@ -4,7 +4,7 @@ import template, { START } from "./eval.template";
 import * as Crypto from 'crypto';
 import * as WebSocket from 'ws';
 
-import { Fn, Message, MessageResult } from '@evaluator/shared-types';
+import { Fn, Message, MessageResult, Result } from '@evaluator/shared-types';
 import { readFileSync } from 'fs';
 import { filter, map, pipe, Subject, take } from 'rxjs';
 import { Entries } from '@evaluator-backend/util-functions';
@@ -83,30 +83,27 @@ export class PuppeteerResolver {
   }
 
   private static decorateResult(message: puppeteer.ConsoleMessage) {
-    let result: string[] = JSON.parse(message.text().replace(START, '').trim());
-    console.log(result);
-    result = result && result.filter((result) => result.toString().length);
-    console.log(result);
-    const sha256 = Crypto.createHash('sha256').update(message.text()).digest('hex'),
-      stacktrace = message.stackTrace(),
-      firstcaller = stacktrace.slice(-1)[0];
-    let lastcaller = stacktrace.slice()[0];
-    // Remove our proper script
-    if (lastcaller['lineNumber'] === 4 && lastcaller['columnNumber'] === 10) {
-      stacktrace.shift();
-    }
-    lastcaller = stacktrace.slice()[0];
-    firstcaller['lineNumber'] = (firstcaller['lineNumber'] || 0) + 1;
-    const line = lastcaller['lineNumber'];
-    const caller = [lastcaller['url'], line].join('#L');
-
-    const messageResult: MessageResult = {
-      sha256,
-      result,
-      stacktrace,
-      stacktrace_as_string: '',
-      caller
-    };
+    const result: Result[] = JSON.parse(message.text().replace(START, '').trim())
+      .map((result: Result) =>
+        typeof result === 'string' ? (result as string).trim() : result
+      );
+    const sha256 = Crypto.createHash('sha256').update(message.text()).digest('hex');
+    let stacktrace = message.stackTrace();
+    const lastcaller = stacktrace && stacktrace.slice(-1)[0];
+    stacktrace = stacktrace.filter((trace) => {
+      trace['lineNumber'] = (trace['lineNumber'] || 0) + 1;
+      return !!trace.url;
+    });
+    lastcaller && stacktrace.length === 0 && stacktrace.push(lastcaller);
+    const firstcaller = stacktrace && stacktrace.slice()[0];
+    const caller = firstcaller && [firstcaller['url'], firstcaller['lineNumber']].join('#L'),
+      messageResult: MessageResult = {
+        sha256,
+        result,
+        stacktrace,
+        stacktrace_as_string: '',
+        caller
+      };
     return messageResult;
   }
 }
@@ -181,9 +178,7 @@ class Puppet {
     if (message.fn && !message.clearFn) {
       const func = this.getFunction(message);
       tpl = template.replace(/window.eval/gm, func);
-      console.log(tpl);
     } else if (message.clearFn) {
-      console.log(message);
       tpl = template.replace(/window.eval/gm, message.fn);
     }
     await page.evaluateOnNewDocument(tpl);

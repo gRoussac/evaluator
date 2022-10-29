@@ -1,4 +1,7 @@
 <ul *ngIf="results?.length">
+  <h3 class="screenshot" (click)="isOpenScreenshot = !isOpenScreenshot">
+    {{ isOpenScreenshot ? '-' : '+' }} screenshot
+  </h3>
   <ng-container *ngFor="let result of results; let i = index">
     <ng-container *ngIf="result">
       <li>
@@ -12,6 +15,7 @@
             >
           </h4>
           <span
+            *ngIf="result?.stacktrace?.length"
             (click)="openStackTrace($event, i)"
             (mousedown)="$event.preventDefault()"
             >{{ isOpenStackTrace(i) ? '-' : '+' }} stacktrace</span

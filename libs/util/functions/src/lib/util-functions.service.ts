@@ -1,6 +1,6 @@
 import { Fn, Functions } from '@evaluator/shared-types';
 import * as Crypto from 'crypto';
-import * as jQuery from 'jquery';
+//import * as jQuery from 'jquery';
 import { DOMWindow, JSDOM } from 'jsdom';
 import { writeFile, statSync, readFileSync } from 'fs';
 import { Inject, Injectable } from '@nestjs/common';
@@ -10,9 +10,7 @@ import { Entries } from './entries';
 export class UtilFunctionsService {
   constructor(
     @Inject('FUNCTIONS_PATH') private readonly path: string
-  ) {
-    console.log(this.path);
-  }
+  ) { }
 
   getFunctions() {
     try {
@@ -20,7 +18,7 @@ export class UtilFunctionsService {
       return JSON.parse(readFileSync(this.path, 'utf8'));
     }
     catch (e) {
-      console.log(this.path + ' does not exist.');
+      console.info(this.path + ' does not exist.');
       return this.setFunctions();
     }
   }
@@ -28,7 +26,7 @@ export class UtilFunctionsService {
   setFunctions(): Functions {
     const windowJSDOM: DOMWindow = new JSDOM('<!DOCTYPE html><html><body></body></html>', { url: 'http://localhost' }).window;
     const document: Document = windowJSDOM?.document;
-    const jquery = jQuery(windowJSDOM);
+    // const jquery = jQuery(windowJSDOM);
 
     const filterFunc = (property: string, obj: object, key: string) => {
       return typeof obj === 'function' && !property.startsWith('_') && !property.toLowerCase().includes(key);
@@ -48,7 +46,7 @@ export class UtilFunctionsService {
     variablesNames.set(str, String);
     variablesNames.set('JSON', JSON);
     variablesNames.set('console', console);
-    variablesNames.set('jQuery', jquery);
+    // variablesNames.set('jQuery', jquery);
 
 
     const variables = new Map<string, Fn[]>();
@@ -85,7 +83,7 @@ export class UtilFunctionsService {
       statSync(this.path);
     }
     catch (e) {
-      console.log(this.path + ' does not exist.');
+      console.info(this.path + ' does not exist.');
       writeFile(this.path, JSON.stringify(entries), (err) => {
         err && console.error(err, 'can not write functions file');
       });

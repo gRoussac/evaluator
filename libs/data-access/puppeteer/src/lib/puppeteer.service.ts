@@ -37,7 +37,7 @@ export class PuppeteerService {
       this.highlightService.activateWorker();
       return await this.highlightService.highlightMessage(message)
         .catch((err: object) => {
-          console.log(err);
+          console.error(err);
           return message;
         }) as MessageResult;
     }));

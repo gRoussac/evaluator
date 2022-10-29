@@ -64,12 +64,11 @@ function setWebscocketServer(server: http.Server) {
 // Start up the Node app
 function run(): void {
   const port = process.env['PORT'] || 4000;
-  console.log(port);
   const express_app = app();
   const server = http.createServer(express_app);
   setWebscocketServer(server);
   server.listen(port, () => {
-    console.log(`Node Express app listening on http://localhost:${port}`);
+    console.info(`Node Express app listening on http://localhost:${port}`);
   });
 }
 

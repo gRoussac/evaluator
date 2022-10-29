@@ -43,6 +43,7 @@ export class ResultsComponent implements AfterViewInit {
 
   results: MessageResult[] = [];
   openStackTraces: boolean[] = [];
+  isOpenScreenshot!: boolean;
 
   private _url = '';
   private _hasResponse!: boolean;
@@ -67,4 +68,5 @@ export class ResultsComponent implements AfterViewInit {
   isOpenStackTrace(index: number): boolean {
     return this.openStackTraces[index];
   }
+
 }

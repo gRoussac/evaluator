@@ -6,12 +6,7 @@ export const highlight = (message: MessageResult) => {
     return message;
   }
   message['result'] = message['result'].map(element => {
-    let elementAsString;
-    if (typeof element === 'object') {
-      elementAsString = JSON.stringify(message['result']);
-    } else {
-      elementAsString = element.toString();
-    }
+    const elementAsString = typeof element === 'object' ? JSON.stringify(element) : element.toString();
     return elementAsString && hljs.highlight(elementAsString, { language: 'javascript' }).value;
   }
   );

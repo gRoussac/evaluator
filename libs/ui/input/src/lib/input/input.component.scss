@@ -24,6 +24,10 @@ input {
     border-color: red;
     box-shadow: red 0px 0px 7px 4px;
   }
+  &.filled {
+    background-color: rgb(232, 240, 254);
+    color: black;
+  }
   @media (max-width: 768px) {
     font-size: 16px;
   }
