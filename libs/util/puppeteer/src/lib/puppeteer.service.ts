@@ -26,15 +26,15 @@ export class PuppeteerResolver {
     }
     try {
       const puppet = new Puppet();
-      res.write('[');
+      res.write('[hello');
       const subscription = puppet.results.pipe(
         PuppeteerResolver.dedupAndFilter()
       ).subscribe((result: MessageResult | undefined) => {
         result && res.write([JSON.stringify(result), ''].join());
       });
-      const screenshot = await puppet.goto({ url, fn, clearFn });
+      // const screenshot = await puppet.goto({ url, fn, clearFn });
       await puppet.close();
-      res.write(['\n', screenshot, ']'].join(''));
+      //res.write(['\n', screenshot, ']'].join(''));
       res.end();
       subscription.unsubscribe();
     }
@@ -45,7 +45,9 @@ export class PuppeteerResolver {
   }
 
   static async resolveWs(message: Message, ws: WebSocket) {
+    ws.send(JSON.stringify('resolveWs ' + message.url));
     if (!isValidHttpUrl(message.url)) {
+      ws.send(JSON.stringify('isValidHttpUrl ' + message.url));
       ws.send(JSON.stringify(false));
       return;
     }
@@ -61,7 +63,7 @@ export class PuppeteerResolver {
         result && ws.send(JSON.stringify(result));
       });
       ws.send(JSON.stringify('goto page ' + message.url));
-      const screenshot = await puppet.goto(message);
+      const screenshot = await puppet.goto(message, ws);
       ws.send(JSON.stringify('screenshot done'));
       screenshot && ws.send(screenshot);
       ws.send(JSON.stringify('puppet close'));
@@ -132,28 +134,38 @@ class Puppet {
     return await puppeteer.launch();
   }
 
-  async goto(message: Message): Promise<puppeteer.HTTPResponse | null | void | string> {
+  async goto(message: Message, ws: WebSocket): Promise<puppeteer.HTTPResponse | null | void | string> {
     const page = await this.getNewPage(message);
     this.setListener(page);
     let aborted = false;
     let url = '';
+    ws.send(JSON.stringify('goto'));
     console.log(getHostname(message.url.trim()));
     page.on('request', req => {
       if (req.isNavigationRequest() && req.frame() === page.mainFrame() && !req.url().includes(getHostname(message.url.trim()))) {
         aborted = true;
         url = req.url();
         console.error(req.url(), message.url);
+        ws.send(JSON.stringify('aborted'));
         req.abort('aborted');
       } else {
+        ws.send(JSON.stringify('continue'));
         req.continue();
       }
     });
+    ws.send(JSON.stringify('setRequestInterception'));
     await page.setRequestInterception(true);
+    ws.send(JSON.stringify('server message.url ' + message.url.trim()));
     console.log('server message.url', message.url.trim());
-    const result = await page.goto(message.url.trim(), { timeout: this.timeout, waitUntil: ['domcontentloaded', 'networkidle0'] }).catch(err => console.error(message.url, url, err));
+    const result = await page.goto(message.url.trim(), { timeout: this.timeout, waitUntil: ['domcontentloaded', 'networkidle0'] }).catch(err => {
+      ws.send(JSON.stringify('error ' + err.toString()));
+      console.error(message.url, url, err);
+    });
+    ws.send(JSON.stringify('screenshot '));
     console.log('server tries screenshot', message.url.trim());
     let screenshot, base64 = '';
     !aborted && (base64 = await page.screenshot({ encoding: "base64" }) as string);
+    ws.send(JSON.stringify('screenshot done'));
     console.log('server screenshot');
     base64 && (screenshot = JSON.stringify(`data:image/png;base64,${base64}`));
     return screenshot || result;
