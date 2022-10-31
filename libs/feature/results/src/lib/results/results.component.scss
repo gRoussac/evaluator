@@ -137,6 +137,9 @@ hr {
     color: #99f3ff;
     cursor: pointer;
     user-select: none;
+    @media (max-width: 768px) {
+      margin-bottom: 0;
+    }
   }
 }
 

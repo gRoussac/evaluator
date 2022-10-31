@@ -76,9 +76,24 @@ select {
     color: #99f3ff;
     font-weight: bold;
     font-size: 30px;
+    @media (max-width: 768px) {
+      font-size: 14px;
+    }
   }
   option {
     color: #99f3ff;
     font-size: 24px;
+    @media (max-width: 768px) {
+      font-size: 12px;
+    }
+  }
+}
+
+.reset {
+  color: #99f3ff;
+  cursor: pointer;
+  @media (max-width: 768px) {
+    position: relative;
+    top: 15px;
   }
 }

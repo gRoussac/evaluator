@@ -77,8 +77,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     fnAsString && this.setFn.emit(fnAsString);
   }
 
-  openSelect() {
-    this.select.nativeElement.dispatchEvent(new MouseEvent('mousedown'));
+  reset() {
+    this.select.nativeElement.value = '';
+    this.url = '';
   }
 
 }

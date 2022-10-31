@@ -35,6 +35,7 @@ export class PuppeteerResolver {
       const screenshot = await puppet.goto({ url, fn, clearFn });
       await puppet.close();
       res.write(['\n', screenshot, ']'].join(''));
+      res.end();
       subscription.unsubscribe();
     }
     catch (error) {
@@ -49,17 +50,25 @@ export class PuppeteerResolver {
       return;
     }
     try {
+      ws.send(JSON.stringify('url ' + message.url));
+      ws.send(JSON.stringify('fn ' + message.fn));
       const puppet = new Puppet();
 
       const subscription = puppet.results.pipe(
         PuppeteerResolver.dedupAndFilter()
       ).subscribe((result: MessageResult | undefined) => {
+        ws.send(JSON.stringify('result found'));
         result && ws.send(JSON.stringify(result));
       });
+      ws.send(JSON.stringify('goto page ' + message.url));
       const screenshot = await puppet.goto(message);
+      ws.send(JSON.stringify('screenshot done'));
       screenshot && ws.send(screenshot);
+      ws.send(JSON.stringify('puppet close'));
       await puppet.close();
+      ws.send(JSON.stringify('puppet closed'));
       ws.send(JSON.stringify(false));
+      ws.send(JSON.stringify('ws close'));
       ws.close();
       subscription.unsubscribe();
     }
@@ -128,8 +137,9 @@ class Puppet {
     this.setListener(page);
     let aborted = false;
     let url = '';
+    console.log(getHostname(message.url.trim()));
     page.on('request', req => {
-      if (req.isNavigationRequest() && req.frame() === page.mainFrame() && !req.url().includes(message.url.trim())) {
+      if (req.isNavigationRequest() && req.frame() === page.mainFrame() && !req.url().includes(getHostname(message.url.trim()))) {
         aborted = true;
         url = req.url();
         console.error(req.url(), message.url);
@@ -144,7 +154,7 @@ class Puppet {
     console.log('server tries screenshot', message.url.trim());
     let screenshot, base64 = '';
     !aborted && (base64 = await page.screenshot({ encoding: "base64" }) as string);
-    console.log('server screenshot', base64);
+    console.log('server screenshot');
     base64 && (screenshot = JSON.stringify(`data:image/png;base64,${base64}`));
     return screenshot || result;
   }
@@ -219,4 +229,14 @@ function isValidHttpUrl(url_test: string) {
     return false;
   }
   return url.protocol === "http:" || url.protocol === "https:";
+}
+
+function getHostname(url_test: string): string {
+  let url: URL;
+  try {
+    url = new URL(url_test);
+  } catch (_) {
+    return url_test;
+  }
+  return url.hostname;
 }

@@ -35,9 +35,15 @@ export class HomeComponent implements OnDestroy {
   private sendResults() {
     this.getMessageSubscription = this.puppeteerService.getMessage().subscribe(async (message: Promise<MessageResult | boolean | string>) => {
       const result = await message;
-      !result && (this.hasResponse = true) && this.changeDetectorRef.markForCheck();
-      result && typeof result === 'string' && (this.screenshot = result);
-      result && typeof result === 'object' && this.resultsService.sendResult(result as MessageResult);
+      if (!result) {
+        this.hasResponse = true;
+        this.changeDetectorRef.markForCheck();
+      }
+      else if (result && typeof result === 'string') {
+        result.includes('data:image') ? (this.screenshot = result) : console.log(result);
+      } else {
+        this.resultsService.sendResult(result as MessageResult);
+      }
     });
   }
 

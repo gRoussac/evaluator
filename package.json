@@ -15,7 +15,7 @@
     "dev:ssr": "nx run evaluator:serve-ssr",
     "build:ssr": "nx build && nx run evaluator:server",
     "serve:ssr": "node dist/evaluator/server/main.js",
-    "serve": "node dist/evaluator/server/main.js & node dist/apps/evaluator-backend/main.js",
+    "serve": "node dist/apps/evaluator-backend/main.js & node dist/evaluator/server/main.js",
     "prerender": "ng run evaluator:prerender",
     "test": "nx test"
   },

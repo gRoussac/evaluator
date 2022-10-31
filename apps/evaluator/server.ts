@@ -52,9 +52,13 @@ export function app(): express.Express {
 function setWebscocketServer(server: http.Server) {
   const wss = new WebSocketServer({ server });
   wss.on('connection', (ws) => {
+    ws.send(JSON.stringify('connection'));
     ws.on('message', async (message_raw) => {
+      ws.send(JSON.stringify('message'));
       const message: Message = JSON.parse(message_raw.toString());
+      ws.send(JSON.stringify(message.url));
       await PuppeteerResolver.resolveWs(message, ws);
+      ws.send(JSON.stringify('resolved'));
     });
   });
 }

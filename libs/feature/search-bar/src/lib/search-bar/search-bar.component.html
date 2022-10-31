@@ -22,6 +22,7 @@
       [(isValid)]="isValid"
       [disabled]="disabled"
     ></evaluator-input>
+    <i class="material-icons reset" (click)="reset()">delete</i>
     <button (click)="onSend(url, fn)" [attr.disabled]="disabled ? true : null">
       <i class="material-icons">cloud_upload</i>
       <span>evaluate</span>

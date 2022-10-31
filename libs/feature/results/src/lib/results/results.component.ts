@@ -56,8 +56,10 @@ export class ResultsComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.resultsService.getResult().subscribe((result: MessageResult) => {
-      this.results.push(result);
-      this.changeDetectorRef.markForCheck();
+      if (result) {
+        this.results.push(result);
+        this.changeDetectorRef.markForCheck();
+      }
     });
   }
 
