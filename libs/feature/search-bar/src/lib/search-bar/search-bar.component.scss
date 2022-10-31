@@ -50,7 +50,6 @@ select {
   padding: 5px 15px;
   box-sizing: border-box;
   font-size: 24px;
-  background: black;
   border-radius: 10px;
   border: 2px solid #99f3ff;
   color: white;
@@ -72,13 +71,7 @@ select {
   -ms-appearance: none !important;
   -o-appearance: none !important;
   appearance: none !important;
-  & + i {
-    right: 9px;
-    top: 8px;
-    color: #99f3ff;
-    border-radius: 5px;
-    user-select: none;
-  }
+  background: black url('/assets/arrow_drop_down.png') 98% center no-repeat;
   optgroup {
     color: #99f3ff;
     font-weight: bold;

@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, InjectionToken, Input, OnDestroy, OnInit, Output, PLATFORM_ID } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Inject, InjectionToken, Input, OnDestroy, OnInit, Output, PLATFORM_ID, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DataAccessFunctionsModule, FunctionsService } from '@evaluator/data-accesss-functions';
 import { Functions, Message } from '@evaluator/shared-types';
@@ -18,6 +18,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   @Output() send = new EventEmitter<Message>;
   @Output() setFn = new EventEmitter<string>();
   @Input() disabled!: boolean;
+  @ViewChild('select') select!: ElementRef;
+
   fn = '';
   url = '';
   isValid = false;
@@ -73,6 +75,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.fn = element.value as string;
     const fnAsString = element.options[element.options.selectedIndex].text;
     fnAsString && this.setFn.emit(fnAsString);
+  }
+
+  openSelect() {
+    this.select.nativeElement.dispatchEvent(new MouseEvent('mousedown'));
   }
 
 }

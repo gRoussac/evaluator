@@ -26,15 +26,15 @@ export class PuppeteerResolver {
     }
     try {
       const puppet = new Puppet();
-      res.status(200).write('[');
+      res.write('[');
       const subscription = puppet.results.pipe(
         PuppeteerResolver.dedupAndFilter()
       ).subscribe((result: MessageResult | undefined) => {
-        result && res.status(200).write(JSON.stringify(result));
+        result && res.write([JSON.stringify(result), ''].join());
       });
-      await puppet.goto({ url, fn, clearFn });
+      const screenshot = await puppet.goto({ url, fn, clearFn });
       await puppet.close();
-      res.status(200).write(']');
+      res.write(['\n', screenshot, ']'].join(''));
       subscription.unsubscribe();
     }
     catch (error) {
@@ -56,7 +56,8 @@ export class PuppeteerResolver {
       ).subscribe((result: MessageResult | undefined) => {
         result && ws.send(JSON.stringify(result));
       });
-      await puppet.goto(message);
+      const screenshot = await puppet.goto(message);
+      screenshot && ws.send(screenshot);
       await puppet.close();
       ws.send(JSON.stringify(false));
       ws.close();
@@ -122,28 +123,28 @@ class Puppet {
     return await puppeteer.launch();
   }
 
-  async goto(message: Message): Promise<puppeteer.HTTPResponse | null | void> {
+  async goto(message: Message): Promise<puppeteer.HTTPResponse | null | void | string> {
     const page = await this.getNewPage(message);
     this.setListener(page);
     let aborted = false;
     let url = '';
     page.on('request', req => {
-      if (req.isNavigationRequest() && req.frame() === page.mainFrame() && req.url() !== message.url) {
+      if (req.isNavigationRequest() && req.frame() === page.mainFrame() && !req.url().includes(message.url.trim())) {
         aborted = true;
         url = req.url();
+        console.error(req.url(), message.url);
         req.abort('aborted');
       } else {
         req.continue();
       }
     });
     await page.setRequestInterception(true);
-    const result = await page.goto(message.url, { timeout: this.timeout, waitUntil: ['domcontentloaded', 'networkidle0'] }).catch(err => console.error(message.url, url, err));
+    const result = await page.goto(message.url.trim(), { timeout: this.timeout, waitUntil: ['domcontentloaded', 'networkidle0'] }).catch(err => console.error(message.url, url, err));
 
-    if (!aborted) {
-      await page.screenshot({ path: 'test.png' });
-    }
-
-    return result;
+    let screenshot, base64 = '';
+    !aborted && (base64 = await page.screenshot({ encoding: "base64" }) as string);
+    base64 && (screenshot = JSON.stringify(`data:image/png;base64,${base64}`));
+    return screenshot || result;
   }
 
   getFunction(message: Message) {

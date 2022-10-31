@@ -21,6 +21,7 @@ export class HomeComponent implements OnDestroy {
   url!: string;
   fn!: string;
   hasResponse!: boolean;
+  screenshot!: string;
 
   private getMessageSubscription?: Subscription;
 
@@ -32,10 +33,11 @@ export class HomeComponent implements OnDestroy {
   }
 
   private sendResults() {
-    this.getMessageSubscription = this.puppeteerService.getMessage().subscribe(async (message: Promise<MessageResult | boolean>) => {
+    this.getMessageSubscription = this.puppeteerService.getMessage().subscribe(async (message: Promise<MessageResult | boolean | string>) => {
       const result = await message;
       !result && (this.hasResponse = true) && this.changeDetectorRef.markForCheck();
-      result && this.resultsService.sendResult(result as MessageResult);
+      result && typeof result === 'string' && (this.screenshot = result);
+      result && typeof result === 'object' && this.resultsService.sendResult(result as MessageResult);
     });
   }
 

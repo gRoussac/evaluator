@@ -22,7 +22,6 @@ const apiProxy = proxy('/api', { target: 'http://localhost:3333' });
 // The Express app is exported so that it can be used by appless Functions.
 export function app(): express.Express {
   const distFolder = join(process.cwd(), 'dist/evaluator/browser');
-  const indexHtml = existsSync(join(distFolder, 'index.original.html')) ? 'index.original.html' : 'index';
   //
   // Our Universal express-engine (found @ https://github.com/angular/universal/tree/main/modules/express-engine)
   express_app.engine('html', ngExpressEngine({
@@ -44,7 +43,7 @@ export function app(): express.Express {
 
   // All regular routes use the Universal engine
   express_app.get('*', (req, res) => {
-    res.render(indexHtml, { req, providers: [{ provide: APP_BASE_HREF, useValue: req.baseUrl }] });
+    res.render('index', { req, providers: [{ provide: APP_BASE_HREF, useValue: req.baseUrl }] });
   });
 
   return express_app;
@@ -52,7 +51,6 @@ export function app(): express.Express {
 
 function setWebscocketServer(server: http.Server) {
   const wss = new WebSocketServer({ server });
-
   wss.on('connection', (ws) => {
     ws.on('message', async (message_raw) => {
       const message: Message = JSON.parse(message_raw.toString());
@@ -68,7 +66,7 @@ function run(): void {
   const server = http.createServer(express_app);
   setWebscocketServer(server);
   server.listen(port, () => {
-    console.info(`Node Express app listening on http://localhost:${port}`);
+    console.log(`Node Express app listening on http://localhost:${port}`);
   });
 }
 

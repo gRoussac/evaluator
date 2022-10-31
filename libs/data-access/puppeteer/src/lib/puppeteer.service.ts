@@ -28,11 +28,13 @@ export class PuppeteerService {
     this.webSocket = this.webSockeFactory(this.url.origin.replace('4200', '4000'));
   }
 
-  getMessage(): Observable<Promise<MessageResult | boolean>> {
+  getMessage(): Observable<Promise<MessageResult | boolean | string>> {
     return this.webSocket.pipe(map(async (message) => {
       if (!message) {
         this.highlightService.terminateWorker();
         this.webSocket?.complete();
+      } else if (typeof message === 'string') {
+        return message;
       }
       this.highlightService.activateWorker();
       return await this.highlightService.highlightMessage(message)
