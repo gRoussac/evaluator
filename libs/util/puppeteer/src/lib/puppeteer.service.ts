@@ -125,7 +125,7 @@ export class PuppeteerResolver {
 class Puppet {
   result$: Subject<puppeteer.ConsoleMessage> = new Subject();
   private browser: Promise<puppeteer.Browser>;
-  private readonly timeout = 6666;
+  private readonly timeout = 26666;
 
   constructor(
   ) {
@@ -133,7 +133,7 @@ class Puppet {
   }
 
   async getBrowser(): Promise<puppeteer.Browser> {
-    return await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'] });
+    return await puppeteer.launch({ executablePath: '/usr/bin/google-chrome-stable', args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'] });
   }
 
   async goto(message: Message, ws: WebSocket): Promise<puppeteer.HTTPResponse | null | void | string> {
