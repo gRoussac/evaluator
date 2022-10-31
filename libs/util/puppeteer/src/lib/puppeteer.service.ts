@@ -133,7 +133,7 @@ class Puppet {
   }
 
   async getBrowser(): Promise<puppeteer.Browser> {
-    return await puppeteer.launch({ executablePath: '/usr/bin/google-chrome-stable', args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'] });
+    return await puppeteer.launch({ executablePath: '/usr/bin/chromium', args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'] });
   }
 
   async goto(message: Message, ws: WebSocket): Promise<puppeteer.HTTPResponse | null | void | string> {
