@@ -1,8 +1,11 @@
-<ul *ngIf="results?.length">
-  <h3 class="screenshot" (click)="isOpenScreenshot = !isOpenScreenshot">
+<div *ngIf="screenshot" class="screenshot">
+  <h3 (click)="isOpenScreenshot = !isOpenScreenshot">
     {{ isOpenScreenshot ? '-' : '+' }} screenshot
   </h3>
-  <img *ngIf="screenshot && isOpenScreenshot" [src]="screenshot" height="400" />
+  <img *ngIf="isOpenScreenshot" [src]="screenshot" width="300" />
+</div>
+
+<ul *ngIf="results?.length">
   <ng-container *ngFor="let result of results; let i = index">
     <ng-container *ngIf="result">
       <li>

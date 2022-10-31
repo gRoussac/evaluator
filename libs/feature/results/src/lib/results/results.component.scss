@@ -132,9 +132,12 @@ hr {
 
 .screenshot {
   text-align: center;
-  color: #99f3ff;
-  cursor: pointer;
-  user-select: none;
+  h3 {
+    text-align: center;
+    color: #99f3ff;
+    cursor: pointer;
+    user-select: none;
+  }
 }
 
 @keyframes progress-bar-stripes {
