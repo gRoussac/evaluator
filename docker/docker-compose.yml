@@ -1,0 +1,22 @@
+version: "3"
+services:
+  evaluator:
+    container_name: evaluator
+    # image: gregoshop/evaluator:latest
+    image: evaluator:latest
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+
+# Build and run image with Dockerfile
+# docker build -t evaluator . --force-rm
+# docker container run -t -i --rm -h evaluator -p 4000:4000 evaluator
+
+# OR
+
+# Pull and run image from https://hub.docker.com/r/gregoshop/evaluator
+# docker pull gregoshop/evaluator
+# docker container run -t -i --rm -h evaluator -p 4000:4000 gregoshop/evaluator
+
+# Visit http://localhost:4000/
