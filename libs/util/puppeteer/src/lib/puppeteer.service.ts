@@ -133,12 +133,15 @@ class Puppet {
   }
 
   async getBrowser(): Promise<puppeteer.Browser> {
-    return await puppeteer.launch();
+    return await puppeteer.launch({ waitForInitialPage: true });
   }
 
   async goto(message: Message, ws: WebSocket): Promise<puppeteer.HTTPResponse | null | void | string> {
     ws.send(JSON.stringify('goto 1'));
     const page = await this.getNewPage(message, ws);
+    if (!page) {
+      return;
+    }
     this.setListener(page);
     let aborted = false;
     let url = '';
@@ -201,7 +204,13 @@ class Puppet {
 
   async getNewPage(message: Message, ws: WebSocket) {
     ws.send(JSON.stringify('getNewPage'));
-    const browser = await this.browser;
+    const browser = await this.browser.catch(err => {
+      console.log(err);
+      ws.send(JSON.stringify('browser err ' + err.toString()));
+    });
+    if (!browser) {
+      return browser;
+    }
     ws.send(JSON.stringify('browser'));
     const page = await browser.newPage();
     ws.send(JSON.stringify('newPage'));
