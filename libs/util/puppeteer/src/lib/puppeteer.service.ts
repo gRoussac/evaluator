@@ -139,10 +139,12 @@ class Puppet {
       }
     });
     await page.setRequestInterception(true);
+    console.log('server message.url', message.url.trim());
     const result = await page.goto(message.url.trim(), { timeout: this.timeout, waitUntil: ['domcontentloaded', 'networkidle0'] }).catch(err => console.error(message.url, url, err));
-
+    console.log('server tries screenshot', message.url.trim());
     let screenshot, base64 = '';
     !aborted && (base64 = await page.screenshot({ encoding: "base64" }) as string);
+    console.log('server screenshot', base64);
     base64 && (screenshot = JSON.stringify(`data:image/png;base64,${base64}`));
     return screenshot || result;
   }
