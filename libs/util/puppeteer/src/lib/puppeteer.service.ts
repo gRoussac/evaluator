@@ -23,25 +23,27 @@ export class PuppeteerResolver {
     if (!isValidHttpUrl(url)) {
       res.status(400).send([PuppeteerResolver.url_not_valid]);
       return;
-    }
-    try {
-      const puppet = new Puppet();
+    } else {
       res.write('[hello');
-      const subscription = puppet.results.pipe(
-        PuppeteerResolver.dedupAndFilter()
-      ).subscribe((result: MessageResult | undefined) => {
-        result && res.write([JSON.stringify(result), ''].join());
-      });
-      // const screenshot = await puppet.goto({ url, fn, clearFn });
-      await puppet.close();
-      //res.write(['\n', screenshot, ']'].join(''));
-      res.end();
-      subscription.unsubscribe();
     }
-    catch (error) {
-      res.status(500).send([PuppeteerResolver.parse_failure, error?.toString()]);
-      return next(error);
-    }
+    // try {
+    //   const puppet = new Puppet();
+    //   res.write('[hello');
+    //   const subscription = puppet.results.pipe(
+    //     PuppeteerResolver.dedupAndFilter()
+    //   ).subscribe((result: MessageResult | undefined) => {
+    //     result && res.write([JSON.stringify(result), ''].join());
+    //   });
+    //   // const screenshot = await puppet.goto({ url, fn, clearFn });
+    //   await puppet.close();
+    //   //res.write(['\n', screenshot, ']'].join(''));
+    //   res.end();
+    //   subscription.unsubscribe();
+    // }
+    // catch (error) {
+    //   res.status(500).send([PuppeteerResolver.parse_failure, error?.toString()]);
+    //   return next(error);
+    // }
   }
 
   static async resolveWs(message: Message, ws: WebSocket) {
