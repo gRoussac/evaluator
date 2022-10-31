@@ -137,11 +137,12 @@ class Puppet {
   }
 
   async goto(message: Message, ws: WebSocket): Promise<puppeteer.HTTPResponse | null | void | string> {
-    const page = await this.getNewPage(message);
+    ws.send(JSON.stringify('goto 1'));
+    const page = await this.getNewPage(message, ws);
     this.setListener(page);
     let aborted = false;
     let url = '';
-    ws.send(JSON.stringify('goto'));
+    ws.send(JSON.stringify('goto 2'));
     console.log(getHostname(message.url.trim()));
     page.on('request', req => {
       if (req.isNavigationRequest() && req.frame() === page.mainFrame() && !req.url().includes(getHostname(message.url.trim()))) {
@@ -198,9 +199,12 @@ class Puppet {
     return [fnGroup, func?.property].join('.');
   }
 
-  async getNewPage(message: Message) {
+  async getNewPage(message: Message, ws: WebSocket) {
+    ws.send(JSON.stringify('getNewPage'));
     const browser = await this.browser;
+    ws.send(JSON.stringify('browser'));
     const page = await browser.newPage();
+    ws.send(JSON.stringify('newPage'));
     let tpl = template;
     if (message.fn && !message.clearFn) {
       const func = this.getFunction(message);
@@ -208,7 +212,9 @@ class Puppet {
     } else if (message.clearFn) {
       tpl = template.replace(/window.eval/gm, message.fn);
     }
+    ws.send(JSON.stringify('evaluateOnNewDocument'));
     await page.evaluateOnNewDocument(tpl);
+    ws.send(JSON.stringify('setUserAgent'));
     await page.setUserAgent(
       'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36'
     );
