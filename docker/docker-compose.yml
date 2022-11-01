@@ -8,6 +8,8 @@ services:
       - "4000:4000"
     environment:
       - PORT=4000
+    security_opt:
+      - seccomp=chrome.json
 
 # Build and run image with Dockerfile
 # docker build -t evaluator . --force-rm
