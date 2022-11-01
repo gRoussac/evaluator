@@ -21,14 +21,19 @@ RUN wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | 
 RUN nvm install v18.7.0
 RUN npm install -g npm@8.19.2
 
-RUN wget https://github.com/gRoussac/evaluator/archive/refs/heads/master.zip
+RUN wget -q https://github.com/gRoussac/evaluator/archive/refs/heads/master.zip
 ARG TMP="./tmp"
 RUN unzip -q ./*.zip -d ${TMP}
 RUN mv ${TMP}/*/* ./ && rm -rf ${TMP} *.zip
 ENV PORT=4000
 RUN npm install --loglevel=error && npm run build --loglevel=error
+RUN ls -al node_modules/puppeteer-core/.local-chromium/linux-*/chrome-linux
 USER root
-RUN cd .cache/puppeteer/chrome/linux-1056772/chrome-linux/ && chown root:root chrome_sandbox && chmod 4755 chrome_sandbox && cp -p chrome_sandbox /usr/local/sbin/chrome-devel-sandbox
+# v 19.2.0
+# ARG INSTALL_DIR=.cache/puppeteer/chrome/linux-1056772/chrome-linux/
+# v 18.2.1
+ARG INSTALL_DIR=node_modules/puppeteer-core/.local-chromium/linux-*/chrome-linux
+RUN cd  ${INSTALL_DIR} && chown root:root chrome_sandbox && chmod 4755 chrome_sandbox && cp -p chrome_sandbox /usr/local/sbin/chrome-devel-sandbox
 USER $USERNAME
 ENV CHROME_DEVEL_SANDBOX=/usr/local/sbin/chrome-devel-sandbox
 RUN ls -al /usr/local/sbin/chrome-devel-sandbox
