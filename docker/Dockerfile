@@ -29,7 +29,6 @@ ENV PORT=4000
 RUN npm install --loglevel=error && npm run build --loglevel=error
 USER root
 RUN cd .cache/puppeteer/chrome/linux-1056772/chrome-linux/ && chown root:root chrome_sandbox && chmod 4755 chrome_sandbox && cp -p chrome_sandbox /usr/local/sbin/chrome-devel-sandbox
-RUN export CHROME_DEVEL_SANDBOX=/usr/local/sbin/chrome-devel-sandbox
 USER $USERNAME
 ENV CHROME_DEVEL_SANDBOX=/usr/local/sbin/chrome-devel-sandbox
 RUN ls -al /usr/local/sbin/chrome-devel-sandbox
