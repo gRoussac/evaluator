@@ -48,13 +48,13 @@ export class HomeComponent implements OnDestroy, OnInit {
       if (!result) {
         this.hasResponse = true;
         // this.puppeteerService.terminateWorker();
-        //   this.changeDetectorRef.markForCheck();
       }
       else if (result && typeof result === 'string') {
         result.includes('data:image') ? (this.screenshot = result) : console.log(result);
       } else {
         this.resultsService.sendResult(result as MessageResult);
       }
+      this.changeDetectorRef.markForCheck();
     });
   }
 

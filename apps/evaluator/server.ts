@@ -56,7 +56,7 @@ function setWebscocketServer(server: http.Server) {
     ws.on('message', async (message_raw) => {
       ws.send(JSON.stringify('message'));
       const message: Message = JSON.parse(message_raw.toString());
-      ws.send(JSON.stringify(message.url));
+      ws.send(JSON.stringify('message url ' + message.url));
       await PuppeteerResolver.resolveWs(message, ws);
       ws.send(JSON.stringify('resolved'));
     });

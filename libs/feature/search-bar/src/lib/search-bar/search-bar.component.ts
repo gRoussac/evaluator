@@ -78,10 +78,15 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   reset() {
-    // this.select.nativeElement.value = '';
     this.url = '';
     this.fn = '';
-    this.setFn.emit('');
+    setTimeout(() => {
+      const element = this.select.nativeElement as HTMLSelectElement;
+      const fnAsString = element.options[element.options.selectedIndex].text;
+      console.log(fnAsString);
+      this.setFn.emit(fnAsString);
+    });
+
   }
 
 }

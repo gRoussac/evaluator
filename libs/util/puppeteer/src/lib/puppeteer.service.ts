@@ -24,7 +24,7 @@ export class PuppeteerResolver {
       res.status(400).send([PuppeteerResolver.url_not_valid]);
       return;
     } else {
-      res.write('[hello');
+      res.write('[');
     }
     try {
       const puppet = new Puppet();
@@ -34,9 +34,9 @@ export class PuppeteerResolver {
       ).subscribe((result: MessageResult | undefined) => {
         result && res.write([JSON.stringify(result), ''].join());
       });
-      // const screenshot = await puppet.goto({ url, fn, clearFn });
+      const screenshot = await puppet.goto({ url, fn, clearFn });
       await puppet.close();
-      //res.write(['\n', screenshot, ']'].join(''));
+      res.write(['\n', screenshot, ']'].join(''));
       res.end();
       subscription.unsubscribe();
     }
@@ -47,16 +47,16 @@ export class PuppeteerResolver {
   }
 
   static async resolveWs(message: Message, ws: WebSocket) {
-    ws.send(JSON.stringify('resolveWs ' + message.url));
+    ws.send(JSON.stringify('resolve  ' + message.url));
     if (!isValidHttpUrl(message.url)) {
-      ws.send(JSON.stringify('isValidHttpUrl ' + message.url));
+      ws.send(JSON.stringify('isValidHttpUrl ? ' + message.url));
       ws.send(JSON.stringify(false));
       return;
     }
     try {
-      ws.send(JSON.stringify('url ' + message.url));
-      ws.send(JSON.stringify('fn ' + message.fn));
-      const puppet = new Puppet();
+      ws.send(JSON.stringify('try url ' + message.url));
+      message.fn && ws.send(JSON.stringify('fn ' + message.fn));
+      const puppet = new Puppet(ws);
 
       const subscription = puppet.results.pipe(
         PuppeteerResolver.dedupAndFilter()
@@ -65,14 +65,14 @@ export class PuppeteerResolver {
         result && ws.send(JSON.stringify(result));
       });
       ws.send(JSON.stringify('goto page ' + message.url));
-      const screenshot = await puppet.goto(message, ws);
-      ws.send(JSON.stringify('screenshot done'));
+      const screenshot = await puppet.goto(message);
+      ws.send(JSON.stringify('send screenshot'));
       screenshot && ws.send(screenshot);
-      ws.send(JSON.stringify('puppet close'));
+      ws.send(JSON.stringify('close puppet'));
       await puppet.close();
       ws.send(JSON.stringify('puppet closed'));
       ws.send(JSON.stringify(false));
-      ws.send(JSON.stringify('ws close'));
+      ws.send(JSON.stringify('ws closed'));
       ws.close();
       subscription.unsubscribe();
     }
@@ -125,53 +125,53 @@ export class PuppeteerResolver {
 class Puppet {
   result$: Subject<puppeteer.ConsoleMessage> = new Subject();
   private browser: Promise<puppeteer.Browser>;
-  private readonly timeout = 66666;
+  private readonly timeout = 16666;
 
-  constructor(
+  constructor(private readonly ws?: WebSocket
   ) {
     this.browser = this.getBrowser();
+    ws && (this.ws = ws);
   }
 
   async getBrowser(): Promise<puppeteer.Browser> {
     return await puppeteer.launch({ timeout: 3 * 30000 });
   }
 
-  async goto(message: Message, ws: WebSocket): Promise<puppeteer.HTTPResponse | null | void | string> {
-    ws.send(JSON.stringify('goto 1'));
-    const page = await this.getNewPage(message, ws);
+  async goto(message: Message): Promise<puppeteer.HTTPResponse | null | void | string> {
+    const page = await this.getNewPage(message);
     if (!page) {
       return;
     }
     this.setListener(page);
     let aborted = false;
     let url = '';
-    ws.send(JSON.stringify('goto 2'));
+    this.ws?.send(JSON.stringify('request'));
     console.log(getHostname(message.url.trim()));
     page.on('request', req => {
       if (req.isNavigationRequest() && req.frame() === page.mainFrame() && !req.url().includes(getHostname(message.url.trim()))) {
         aborted = true;
         url = req.url();
         console.error(req.url(), message.url);
-        ws.send(JSON.stringify('aborted'));
+        this.ws?.send(JSON.stringify('aborted'));
         req.abort('aborted');
-        ws.send(JSON.stringify(false));
+        this.ws?.send(JSON.stringify(false));
       } else {
         req.continue();
       }
     });
-    ws.send(JSON.stringify('setRequestInterception'));
+    this.ws?.send(JSON.stringify('set request interception'));
     await page.setRequestInterception(true);
-    ws.send(JSON.stringify('server message.url ' + message.url.trim()));
+    this.ws?.send(JSON.stringify('server message.url ' + message.url.trim()));
     console.log('server message.url', message.url.trim());
     const result = await page.goto(message.url.trim(), { timeout: this.timeout, waitUntil: ['domcontentloaded', 'networkidle0'] }).catch(err => {
-      ws.send(JSON.stringify('error ' + err.toString()));
+      this.ws?.send(JSON.stringify('error ' + err.toString()));
       console.error(message.url, url, err);
     });
-    ws.send(JSON.stringify('screenshot '));
+    this.ws?.send(JSON.stringify('server tries screenshot'));
     console.log('server tries screenshot', message.url.trim());
     let screenshot, base64 = '';
     !aborted && (base64 = await page.screenshot({ encoding: "base64" }) as string);
-    ws.send(JSON.stringify('screenshot done'));
+    this.ws?.send(JSON.stringify('screenshot done'));
     console.log('server screenshot');
     base64 && (screenshot = JSON.stringify(`data:image/png;base64,${base64}`));
     return screenshot || result;
@@ -202,18 +202,18 @@ class Puppet {
     return [fnGroup, func?.property].join('.');
   }
 
-  async getNewPage(message: Message, ws: WebSocket) {
-    ws.send(JSON.stringify('getNewPage'));
+  async getNewPage(message: Message) {
+    this.ws?.send(JSON.stringify('get new page'));
     const browser = await this.browser.catch(err => {
       console.log(err);
-      ws.send(JSON.stringify('browser err ' + err.toString()));
+      this.ws?.send(JSON.stringify('browser err ' + err.toString()));
     });
     if (!browser) {
       return browser;
     }
-    ws.send(JSON.stringify('browser'));
+    this.ws?.send(JSON.stringify('get browser'));
     const page = await browser.newPage();
-    ws.send(JSON.stringify('newPage'));
+    this.ws?.send(JSON.stringify('new page done'));
     let tpl = template;
     if (message.fn && !message.clearFn) {
       const func = this.getFunction(message);
@@ -221,9 +221,8 @@ class Puppet {
     } else if (message.clearFn) {
       tpl = template.replace(/window.eval/gm, message.fn);
     }
-    ws.send(JSON.stringify('evaluateOnNewDocument'));
+    this.ws?.send(JSON.stringify('evaluate Document'));
     await page.evaluateOnNewDocument(tpl);
-    ws.send(JSON.stringify('setUserAgent'));
     await page.setUserAgent(
       'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36'
     );

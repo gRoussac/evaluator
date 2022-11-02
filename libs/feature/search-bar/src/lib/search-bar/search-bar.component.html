@@ -1,4 +1,3 @@
-kk{{ fn }}kk
 <div class="d-flex flex-col">
   <div class="relative">
     <select
@@ -25,7 +24,12 @@ kk{{ fn }}kk
       [(isValid)]="isValid"
       [disabled]="disabled"
     ></evaluator-input>
-    <i class="material-icons reset" (click)="reset()">delete</i>
+    <i
+      class="material-icons reset"
+      (click)="reset()"
+      [ngClass]="{ disabled: disabled }"
+      >delete</i
+    >
     <button (click)="onSend(url, fn)" [attr.disabled]="disabled ? true : null">
       <i class="material-icons">cloud_upload</i>
       <span>evaluate</span>
