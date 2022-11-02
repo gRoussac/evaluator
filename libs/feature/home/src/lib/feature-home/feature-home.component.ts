@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import { SearchBarComponent } from '@evaluator/feature-search-bar';
 import { ResultsComponent } from '@evaluator/feature/results';
 import { DataAccessPuppeteerModule, PuppeteerService } from '@evaluator/data-access-puppeteer';
@@ -17,19 +17,29 @@ import { ResultsService } from '@evaluator/shared-services';
   styleUrls: ['./feature-home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomeComponent implements OnDestroy {
+export class HomeComponent implements OnDestroy, OnInit {
   url!: string;
   fn!: string;
+  fnAsString!: string;
   hasResponse!: boolean;
   screenshot!: string;
 
+  private window: Window;
   private getMessageSubscription?: Subscription;
 
   constructor(
     private readonly puppeteerService: PuppeteerService,
     private readonly resultsService: ResultsService,
-    private readonly changeDetectorRef: ChangeDetectorRef
+    private readonly changeDetectorRef: ChangeDetectorRef,
+    @Inject(DOCUMENT) private readonly document: Document,
   ) {
+    this.window = this.document.defaultView as Window;
+
+  }
+
+  ngOnInit() {
+    this.window?.localStorage && (this.fn = this.window.localStorage.getItem('evaluator.fn') || '');
+    this.window?.localStorage && (this.fnAsString = this.window.localStorage.getItem('evaluator.fnAsString') || '');
   }
 
   private sendResults() {
@@ -37,7 +47,8 @@ export class HomeComponent implements OnDestroy {
       const result = await message;
       if (!result) {
         this.hasResponse = true;
-        this.changeDetectorRef.markForCheck();
+        // this.puppeteerService.terminateWorker();
+        //   this.changeDetectorRef.markForCheck();
       }
       else if (result && typeof result === 'string') {
         result.includes('data:image') ? (this.screenshot = result) : console.log(result);
@@ -50,12 +61,18 @@ export class HomeComponent implements OnDestroy {
   send(message: Message) {
     this.hasResponse = false;
     this.url = message.url;
+    this.fn = message.fn;
+    this.screenshot = '';
     this.puppeteerService.sendMessage(message);
     this.sendResults();
+    this.window?.localStorage && this.window.localStorage.setItem('evaluator.fn', this.fn);
   }
 
-  setFn(fn: string) {
-    fn && (this.fn = fn);
+  setFn(fnAsString: string) {
+    this.hasResponse = false;
+    this.url = '';
+    this.fnAsString = fnAsString;
+    this.window?.localStorage && this.window.localStorage.setItem('evaluator.fnAsString', this.fnAsString);
   }
 
   ngOnDestroy(): void {

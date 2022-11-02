@@ -24,6 +24,8 @@ export class ResultsComponent implements AfterViewInit {
     if (!hasResponse) {
       this.results = [];
       this.openStackTraces = [];
+      this.isOpenScreenshot = false;
+      this.screenshot = '';
     }
     this._hasResponse = hasResponse;
   }
@@ -33,12 +35,11 @@ export class ResultsComponent implements AfterViewInit {
   @Input()
   set url(value: string) {
     this._url = value;
-    this.openStackTraces = [];
   }
   get url() {
     return this._url;
   }
-  @Input() fn!: string;
+  @Input() fnAsString!: string;
   @Input() screenshot!: string;
   @HostBinding('class.filled') get result() { return this.url && this.results.length; }
 

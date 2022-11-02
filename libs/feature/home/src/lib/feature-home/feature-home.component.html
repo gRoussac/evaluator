@@ -8,10 +8,11 @@
   (send)="send($event)"
   [disabled]="!hasResponse && !!url"
   (setFn)="setFn($event)"
+  [fn]="fn"
 ></evaluator-search-bar>
 <evaluator-results
   [url]="url"
-  [fn]="fn || 'window.eval'"
+  [fnAsString]="fnAsString"
   [screenshot]="screenshot"
   [hasResponse]="hasResponse"
 ></evaluator-results>

@@ -18,9 +18,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   @Output() send = new EventEmitter<Message>;
   @Output() setFn = new EventEmitter<string>();
   @Input() disabled!: boolean;
+  @Input() fn!: string;
   @ViewChild('select') select!: ElementRef;
 
-  fn = '';
   url = '';
   isValid = false;
   functions: Functions = {};
@@ -78,8 +78,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   reset() {
-    this.select.nativeElement.value = '';
+    // this.select.nativeElement.value = '';
     this.url = '';
+    this.fn = '';
+    this.setFn.emit('');
   }
 
 }

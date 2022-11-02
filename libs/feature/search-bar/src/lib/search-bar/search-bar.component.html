@@ -1,3 +1,4 @@
+kk{{ fn }}kk
 <div class="d-flex flex-col">
   <div class="relative">
     <select
@@ -9,7 +10,9 @@
         <option
           *ngFor="let func of functions[key]"
           [value]="func['sha256']"
-          [attr.selected]="func['default'] ? true : null"
+          [attr.selected]="
+            (!fn && func['default']) || func['sha256'] === fn ? true : null
+          "
         >
           {{ key }}.{{ func['property'] }}
         </option>

@@ -26,24 +26,24 @@ export class PuppeteerResolver {
     } else {
       res.write('[hello');
     }
-    // try {
-    //   const puppet = new Puppet();
-    //   res.write('[hello');
-    //   const subscription = puppet.results.pipe(
-    //     PuppeteerResolver.dedupAndFilter()
-    //   ).subscribe((result: MessageResult | undefined) => {
-    //     result && res.write([JSON.stringify(result), ''].join());
-    //   });
-    //   // const screenshot = await puppet.goto({ url, fn, clearFn });
-    //   await puppet.close();
-    //   //res.write(['\n', screenshot, ']'].join(''));
-    //   res.end();
-    //   subscription.unsubscribe();
-    // }
-    // catch (error) {
-    //   res.status(500).send([PuppeteerResolver.parse_failure, error?.toString()]);
-    //   return next(error);
-    // }
+    try {
+      const puppet = new Puppet();
+      res.write('[hello');
+      const subscription = puppet.results.pipe(
+        PuppeteerResolver.dedupAndFilter()
+      ).subscribe((result: MessageResult | undefined) => {
+        result && res.write([JSON.stringify(result), ''].join());
+      });
+      // const screenshot = await puppet.goto({ url, fn, clearFn });
+      await puppet.close();
+      //res.write(['\n', screenshot, ']'].join(''));
+      res.end();
+      subscription.unsubscribe();
+    }
+    catch (error) {
+      res.status(500).send([PuppeteerResolver.parse_failure, error?.toString()]);
+      return next(error);
+    }
   }
 
   static async resolveWs(message: Message, ws: WebSocket) {
@@ -133,7 +133,7 @@ class Puppet {
   }
 
   async getBrowser(): Promise<puppeteer.Browser> {
-    return await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'] });
+    return await puppeteer.launch({ timeout: 3 * 30000 });
   }
 
   async goto(message: Message, ws: WebSocket): Promise<puppeteer.HTTPResponse | null | void | string> {
@@ -154,8 +154,8 @@ class Puppet {
         console.error(req.url(), message.url);
         ws.send(JSON.stringify('aborted'));
         req.abort('aborted');
+        ws.send(JSON.stringify(false));
       } else {
-        ws.send(JSON.stringify('continue'));
         req.continue();
       }
     });

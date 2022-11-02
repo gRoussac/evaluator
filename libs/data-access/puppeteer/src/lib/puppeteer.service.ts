@@ -31,18 +31,23 @@ export class PuppeteerService {
   getMessage(): Observable<Promise<MessageResult | boolean | string>> {
     return this.webSocket.pipe(map(async (message) => {
       if (!message) {
-        this.highlightService.terminateWorker();
         this.webSocket?.complete();
+        return message;
       } else if (typeof message === 'string') {
         return message;
       }
       this.highlightService.activateWorker();
-      return await this.highlightService.highlightMessage(message)
+      const result = await this.highlightService.highlightMessage(message)
         .catch((err: object) => {
           console.error(err);
           return message;
         }) as MessageResult;
+      return result;
     }));
+  }
+
+  terminateWorker() {
+    this.highlightService.terminateWorker();
   }
 
   sendMessage(message: Message): void {
