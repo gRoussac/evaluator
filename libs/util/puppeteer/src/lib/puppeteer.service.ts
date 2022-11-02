@@ -125,7 +125,7 @@ export class PuppeteerResolver {
 class Puppet {
   result$: Subject<puppeteer.ConsoleMessage> = new Subject();
   private browser: Promise<puppeteer.Browser>;
-  private readonly timeout = 26666;
+  private readonly timeout = 66666;
 
   constructor(
   ) {
