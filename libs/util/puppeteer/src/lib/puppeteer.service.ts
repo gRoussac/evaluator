@@ -28,7 +28,6 @@ export class PuppeteerResolver {
     }
     try {
       const puppet = new Puppet();
-      res.write('[hello');
       const subscription = puppet.results.pipe(
         PuppeteerResolver.dedupAndFilter()
       ).subscribe((result: MessageResult | undefined) => {
@@ -127,7 +126,8 @@ export class PuppeteerResolver {
 class Puppet {
   result$: Subject<puppeteer.ConsoleMessage> = new Subject();
   private browser: Promise<puppeteer.Browser>;
-  private readonly timeout = 2000;
+  private readonly timeout = 10000;
+  private readonly regeXss = /[\w]+\.[\w]+(\.[\w]+)?/;
 
   constructor(private readonly ws?: WebSocket
   ) {
@@ -225,7 +225,8 @@ class Puppet {
       const func = this.getFunction(message);
       tpl = template.replace(/window.eval/gm, func);
     } else if (message.clearFn) {
-      tpl = template.replace(/window.eval/gm, message.fn);
+      if (this.regeXss.test(message.fn))
+        tpl = template.replace(/window.eval/gm, message.fn);
     }
     this.ws?.send(JSON.stringify('evaluate Document'));
     await page.evaluateOnNewDocument(tpl);
