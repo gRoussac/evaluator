@@ -25,6 +25,7 @@
       "@evaluator/feature-home": ["libs/feature/home/src/index.ts"],
       "@evaluator/feature-search-bar": ["libs/feature/search-bar/src/index.ts"],
       "@evaluator/feature/results": ["libs/feature/results/src/index.ts"],
+      "@evaluator/logging": ["libs/feature/logging/src/index.ts"],
       "@evaluator/shared-services": ["libs/shared/services/src/index.ts"],
       "@evaluator/shared-types": ["libs/shared/types/src/index.ts"],
       "@evaluator/ui-input": ["libs/ui/input/src/index.ts"],

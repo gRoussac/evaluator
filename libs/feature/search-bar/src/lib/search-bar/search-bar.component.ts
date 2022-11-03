@@ -19,7 +19,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   @Output() setFn = new EventEmitter<string>();
   @Input() disabled!: boolean;
   @Input() fn!: string;
-  @ViewChild('select') select!: ElementRef;
+  @ViewChild('select') private select!: ElementRef;
 
   url = '';
   isValid = false;

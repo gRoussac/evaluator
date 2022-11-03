@@ -47,7 +47,7 @@ export class PuppeteerResolver {
   }
 
   static async resolveWs(message: Message, ws: WebSocket) {
-    ws.send(JSON.stringify('resolve  ' + message.url));
+    ws.send(JSON.stringify('resolve ' + message.url));
     if (!isValidHttpUrl(message.url)) {
       ws.send(JSON.stringify('isValidHttpUrl ? ' + message.url));
       ws.send(JSON.stringify(false));
@@ -66,8 +66,10 @@ export class PuppeteerResolver {
       });
       ws.send(JSON.stringify('goto page ' + message.url));
       const screenshot = await puppet.goto(message);
-      ws.send(JSON.stringify('send screenshot'));
-      screenshot && ws.send(screenshot);
+      if (screenshot) {
+        ws.send(JSON.stringify('sendscreenshot'));
+        ws.send(screenshot);
+      }
       ws.send(JSON.stringify('close puppet'));
       await puppet.close();
       ws.send(JSON.stringify('puppet closed'));
@@ -125,7 +127,7 @@ export class PuppeteerResolver {
 class Puppet {
   result$: Subject<puppeteer.ConsoleMessage> = new Subject();
   private browser: Promise<puppeteer.Browser>;
-  private readonly timeout = 16666;
+  private readonly timeout = 2000;
 
   constructor(private readonly ws?: WebSocket
   ) {
@@ -152,9 +154,9 @@ class Puppet {
         aborted = true;
         url = req.url();
         console.error(req.url(), message.url);
-        this.ws?.send(JSON.stringify('aborted'));
+        this.ws?.send(JSON.stringify('aborted before redirection to ' + req.url()));
         req.abort('aborted');
-        this.ws?.send(JSON.stringify(false));
+        // this.ws?.send(JSON.stringify(false));
       } else {
         req.continue();
       }
@@ -167,13 +169,15 @@ class Puppet {
       this.ws?.send(JSON.stringify('error ' + err.toString()));
       console.error(message.url, url, err);
     });
-    this.ws?.send(JSON.stringify('server tries screenshot'));
-    console.log('server tries screenshot', message.url.trim());
-    let screenshot, base64 = '';
-    !aborted && (base64 = await page.screenshot({ encoding: "base64" }) as string);
-    this.ws?.send(JSON.stringify('screenshot done'));
-    console.log('server screenshot');
-    base64 && (screenshot = JSON.stringify(`data:image/png;base64,${base64}`));
+    let screenshot = '';
+    if (!aborted) {
+      this.ws?.send(JSON.stringify('server tries screenshot'));
+      console.log('server tries screenshot', message.url.trim());
+      const base64 = await page.screenshot({ encoding: "base64" }) as string;
+      this.ws?.send(JSON.stringify('screenshot done'));
+      console.log('server screenshot');
+      base64 && (screenshot = JSON.stringify(`data:image/png;base64,${base64}`));
+    }
     return screenshot || result;
   }
 

@@ -6,13 +6,15 @@ import { DataAccessPuppeteerModule, PuppeteerService } from '@evaluator/data-acc
 import { Subscription } from 'rxjs';
 import { Message, MessageResult } from '@evaluator/shared-types';
 import { ResultsService } from '@evaluator/shared-services';
+import { LoggingComponent } from '@evaluator/logging';
+import { LoggingService } from 'libs/feature/logging/src/lib/logging.service';
 
 
 @Component({
   selector: 'evaluator-feature-home',
   standalone: true,
-  imports: [CommonModule, SearchBarComponent, ResultsComponent, DataAccessPuppeteerModule],
-  providers: [ResultsService],
+  imports: [CommonModule, SearchBarComponent, ResultsComponent, DataAccessPuppeteerModule, LoggingComponent],
+  providers: [ResultsService, LoggingService],
   templateUrl: './feature-home.component.html',
   styleUrls: ['./feature-home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,6 +34,7 @@ export class HomeComponent implements OnDestroy, OnInit {
     private readonly resultsService: ResultsService,
     private readonly changeDetectorRef: ChangeDetectorRef,
     @Inject(DOCUMENT) private readonly document: Document,
+    private readonly loggingService: LoggingService
   ) {
     this.window = this.document.defaultView as Window;
 
@@ -50,7 +53,7 @@ export class HomeComponent implements OnDestroy, OnInit {
         // this.puppeteerService.terminateWorker();
       }
       else if (result && typeof result === 'string') {
-        result.includes('data:image') ? (this.screenshot = result) : console.log(result);
+        result.includes('data:image') ? (this.screenshot = result) : this.loggingService.sendLog(result);
       } else {
         this.resultsService.sendResult(result as MessageResult);
       }

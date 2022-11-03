@@ -12,10 +12,10 @@ h1 {
   font-size: 60px;
   color: white;
   border-bottom: 1px solid #99f3ff;
-  margin: 64px 32px;
+  margin: 64px 32px 32px 32px;
   @media (max-width: 768px) {
     font-size: 30px;
-    margin: 32px 16px;
+    margin: 32px 16px 22px 16px;
   }
 }
 
@@ -23,10 +23,12 @@ h1 {
   width: 32%;
   margin: 0px auto;
   height: 1rem;
+  @media (max-width: 768px) {
+    width: 54%;
+  }
 }
 .progress {
   width: 100%;
-  display: -ms-flexbox;
   display: flex;
   height: 1rem;
   overflow: hidden;
@@ -35,14 +37,13 @@ h1 {
   background-color: #e9ecef;
   border-radius: 0.5rem;
   position: relative;
-  top: -3em;
+  top: -1rem;
   @media (max-width: 768px) {
-    top: -1.5em;
+    top: -0.9em;
   }
 }
 .progress-bar {
   width: 100%;
-  display: -ms-flexbox;
   display: flex;
   -ms-flex-direction: column;
   flex-direction: column;

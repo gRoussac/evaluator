@@ -2,7 +2,6 @@
   display: block;
   margin: 0px auto;
   width: 100%;
-  border-radius: 10px;
   border: 1px solid #99f3ff;
   border-radius: 10px;
   box-sizing: border-box;
@@ -43,6 +42,7 @@
 ul {
   padding-right: 40px;
   list-style: none;
+  margin-top: 0.5rem;
   @media (max-width: 768px) {
     padding: 15px;
     margin: 0;
@@ -137,9 +137,14 @@ hr {
     color: #99f3ff;
     cursor: pointer;
     user-select: none;
+    margin-bottom: 0;
+    font-size: 1rem;
     @media (max-width: 768px) {
-      margin-bottom: 0;
+      font-size: 0.75rem;
     }
+  }
+  img {
+    margin-top: 1rem;
   }
 }
 
