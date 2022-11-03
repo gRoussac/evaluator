@@ -165,12 +165,14 @@ class Puppet {
     await page.setRequestInterception(true);
     this.ws?.send(JSON.stringify('server message.url ' + message.url.trim()));
     console.log('server message.url', message.url.trim());
+    let error = false;
     const result = await page.goto(message.url.trim(), { timeout: this.timeout, waitUntil: ['domcontentloaded', 'networkidle0'] }).catch(err => {
       this.ws?.send(JSON.stringify('error ' + err.toString()));
       console.error(message.url, url, err);
+      error = true;
     });
     let screenshot = '';
-    if (!aborted) {
+    if (!aborted && !error) {
       this.ws?.send(JSON.stringify('server tries screenshot'));
       console.log('server tries screenshot', message.url.trim());
       const base64 = await page.screenshot({ encoding: "base64" }) as string;
