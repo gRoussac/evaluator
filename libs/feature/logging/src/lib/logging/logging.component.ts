@@ -22,12 +22,23 @@ export class LoggingComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.loggingService.getLog().subscribe((log: string) => {
-      console.log(log);
       const element = this.textarea.nativeElement as HTMLTextAreaElement;
       element.textContent += !element.textContent ? log : '\n\n' + log;
-      element.scrollTop = element.scrollHeight;
+      this.scroll();
       this.changeDetectorRef.markForCheck();
     });
+  }
+
+  open() {
+    this.isOpen = !this.isOpen;
+    setTimeout(() => {
+      this.scroll();
+    });
+  }
+
+  private scroll() {
+    const element = this.textarea.nativeElement as HTMLTextAreaElement;
+    element.scrollTop = element.scrollHeight;
   }
 
 }

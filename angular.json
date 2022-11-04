@@ -15,6 +15,7 @@
     "shared-types": "libs/shared/types",
     "ui-input": "libs/ui/input",
     "util-functions": "libs/util/functions",
-    "util-hihlight-webworker": "libs/util/hihlight-webworker"
+    "util-hihlight-webworker": "libs/util/hihlight-webworker",
+    "util-sqlite": "libs/util/sqlite"
   }
 }

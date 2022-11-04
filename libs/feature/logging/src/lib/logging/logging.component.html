@@ -1,4 +1,4 @@
-<h3 (click)="isOpen = !isOpen">{{ isOpen ? '-' : '+' }} logging</h3>
+<h3 (click)="open()">{{ isOpen ? '-' : '+' }} logging</h3>
 <textarea
   #textarea
   [ngClass]="{ hidden: !isOpen }"

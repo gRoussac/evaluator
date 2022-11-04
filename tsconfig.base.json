@@ -28,6 +28,7 @@
       "@evaluator/logging": ["libs/feature/logging/src/index.ts"],
       "@evaluator/shared-services": ["libs/shared/services/src/index.ts"],
       "@evaluator/shared-types": ["libs/shared/types/src/index.ts"],
+      "@evaluator/sqlite": ["libs/util/sqlite/src/index.ts"],
       "@evaluator/ui-input": ["libs/ui/input/src/index.ts"],
       "@evaluator/util-hightlight-webworker": [
         "libs/util/hihlight-webworker/src/index.ts"

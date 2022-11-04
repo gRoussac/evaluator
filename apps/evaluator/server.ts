@@ -3,7 +3,6 @@ import 'zone.js/dist/zone-node';
 import { APP_BASE_HREF } from '@angular/common';
 import { ngExpressEngine } from '@nguniversal/express-engine';
 import { AppServerModule } from './src/main.server';
-import { existsSync } from 'fs';
 import { join } from 'path';
 import * as express from 'express';
 import { WebSocketServer } from 'ws';
@@ -11,6 +10,7 @@ import * as http from 'http';
 import { createProxyMiddleware as proxy } from 'http-proxy-middleware';
 import { Message } from '@evaluator/shared-types';
 import { PuppeteerResolver } from '@evaluator/util-puppeteer';
+import { SqliteService } from '@evaluator/sqlite';
 
 dotenv.config({ override: true });
 

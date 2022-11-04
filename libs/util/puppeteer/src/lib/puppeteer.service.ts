@@ -10,6 +10,7 @@ import { filter, map, pipe, Subject, take } from 'rxjs';
 import { Entries } from '@evaluator-backend/util-functions';
 
 import * as Path from 'path';
+import { SqliteService } from '@evaluator/sqlite';
 
 export class PuppeteerResolver {
   private static readonly url_not_valid = 'not a valid url?';
@@ -128,11 +129,13 @@ class Puppet {
   private browser: Promise<puppeteer.Browser>;
   private readonly timeout = 10000;
   private readonly regeXss = /[\w]+\.[\w]+(\.[\w]+)?/;
+  private readonly sqliteService: SqliteService;
 
   constructor(private readonly ws?: WebSocket
   ) {
     this.browser = this.getBrowser();
     ws && (this.ws = ws);
+    this.sqliteService = new SqliteService();
   }
 
   async getBrowser(): Promise<puppeteer.Browser> {
@@ -221,13 +224,14 @@ class Puppet {
     const page = await browser.newPage();
     this.ws?.send(JSON.stringify('new page done'));
     let tpl = template;
+    let fn = '';
     if (message.fn && !message.clearFn) {
-      const func = this.getFunction(message);
-      tpl = template.replace(/window.eval/gm, func);
-    } else if (message.clearFn) {
-      if (this.regeXss.test(message.fn))
-        tpl = template.replace(/window.eval/gm, message.fn);
+      fn = this.getFunction(message);
+    } else if (message.clearFn && this.regeXss.test(message.fn)) {
+      fn = message.fn;
     }
+    fn && (tpl = template.replace(/window.eval/gm, fn));
+    await this.sqliteService.insert(message);
     this.ws?.send(JSON.stringify('evaluate Document'));
     await page.evaluateOnNewDocument(tpl);
     await page.setUserAgent(
