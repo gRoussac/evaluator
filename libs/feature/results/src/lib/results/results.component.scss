@@ -65,7 +65,7 @@ ul {
   }
 }
 
-li > h4 {
+li h4 {
   white-space: pre-wrap;
   word-break: break-word;
   @media (max-width: 768px) {
@@ -122,7 +122,7 @@ li > h4 {
 
 hr {
   display: block;
-  margin-top: 30px;
+  margin-top: 10px;
   border-color: #99f3ff;
 }
 
@@ -146,6 +146,14 @@ hr {
   img {
     margin-top: 1rem;
   }
+}
+
+.showBeautify {
+  font-size: 1rem;
+  font-weight: 600;
+  align-self: center;
+  color: #99f3ff;
+  margin-left: auto;
 }
 
 @keyframes progress-bar-stripes {

@@ -45,6 +45,7 @@ export class ResultsComponent implements AfterViewInit {
 
   results: MessageResult[] = [];
   openStackTraces: boolean[] = [];
+  showBeautifies: boolean[] = [];
   isOpenScreenshot!: boolean;
 
   private _url = '';
@@ -71,6 +72,15 @@ export class ResultsComponent implements AfterViewInit {
 
   isOpenStackTrace(index: number): boolean {
     return this.openStackTraces[index];
+  }
+
+  showBeautify(event: Event, index: number): void {
+    event.preventDefault();
+    this.showBeautifies[index] = !this.showBeautifies[index];
+  };
+
+  isBeautified(index: number): boolean {
+    return this.showBeautifies[index];
   }
 
 }

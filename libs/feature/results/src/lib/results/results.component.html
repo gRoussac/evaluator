@@ -31,9 +31,21 @@
           [innerHtml]="result?.stacktrace_as_string"
         ></span>
         <div class="pre overflow-y">
-          <code [innerHtml]="result?.result"></code>
+          <code *ngIf="!isBeautified(i)" [innerHtml]="result?.result"></code>
+          <code
+            *ngIf="isBeautified(i)"
+            [innerHtml]="result?.result_unpack"
+          ></code>
         </div>
-        <h4>ID:&nbsp;{{ result?.sha256 }}</h4>
+        <div class="d-flex">
+          <h4>ID:&nbsp;{{ result?.sha256 }}</h4>
+          <span
+            class="showBeautify"
+            (click)="showBeautify($event, i)"
+            (mousedown)="$event.preventDefault()"
+            >{{ isBeautified(i) ? '-' : '+' }} beautify</span
+          >
+        </div>
         <hr *ngIf="i !== results.length - 1" />
       </li>
     </ng-container>

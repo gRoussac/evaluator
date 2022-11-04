@@ -101,7 +101,7 @@ export class PuppeteerResolver {
   private static decorateResult(message: puppeteer.ConsoleMessage) {
     const result: Result[] = JSON.parse(message.text().replace(START, '').trim())
       .map((result: Result) =>
-        typeof result === 'string' ? (result as string).trim() : result
+        typeof result === 'string' ? (result as string).trim().replace(/\n/g, ' ').replace(/\s\s+/g, ' ') : result
       );
     const sha256 = Crypto.createHash('sha256').update(message.text()).digest('hex');
     let stacktrace = message.stackTrace();

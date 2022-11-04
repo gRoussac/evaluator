@@ -6,6 +6,7 @@ export type Result = string | number | object;
 export type MessageResult = {
   sha256: string;
   result: Result[];
+  result_unpack?: Result[];
   stacktrace: puppeteer.ConsoleMessageLocation[];
   stacktrace_as_string?: string;
   caller: string;
