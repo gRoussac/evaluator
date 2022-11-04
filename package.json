@@ -95,8 +95,6 @@
     "webpack-node-externals": "^3.0.0"
   },
   "browser": {
-    "crypto": false,
-    "bufferutil": false,
-    "utf-8-validate": false
+    "crypto": false
   }
 }

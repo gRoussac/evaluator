@@ -5,6 +5,12 @@ const { merge } = require('webpack-merge');
 module.exports = (config, context) => {
   return merge(config, {
     externalsPresets: { node: true },
-    externals: [{ sqlite3: 'commonjs sqlite3' }],
+    externals: [
+      {
+        bufferutil: false,
+        'utf-8-validate': false,
+        sqlite3: 'commonjs sqlite3',
+      },
+    ],
   });
 };
