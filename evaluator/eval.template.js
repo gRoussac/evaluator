@@ -1,4 +1,4 @@
-export const START = '##START##';
+const START = '##START##';
 const test = `\`${START}\${ stringify_back(expr, (key, val) => typeof val === 'function' ? val.toString().replace(/\\s+/gm, ' ') : val) }\``;
 const template = `
 const stringify_back = JSON.stringify;
@@ -10,4 +10,5 @@ window.eval = function (...expr) {
 };
 `;
 
-export default template;
+exports.START = START;
+exports.template = template;
