@@ -40,7 +40,7 @@ export function app(): express.Express {
   // Example Express Rest API endpoints
   express_app.get('/evaluate/*', PuppeteerResolver.resolve);
 
-  express_app.use(auth, (req, res, next) => {
+  express_app.use('/db/*', auth, (req, res, next) => {
     next();
   });
 
