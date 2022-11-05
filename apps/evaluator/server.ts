@@ -10,8 +10,14 @@ import * as http from 'http';
 import { createProxyMiddleware as proxy } from 'http-proxy-middleware';
 import { Message } from '@evaluator/shared-types';
 import { PuppeteerResolver } from '@evaluator/util-puppeteer';
-import { SqliteService } from '@evaluator/sqlite';
-
+import * as basicAuth from 'express-basic-auth';
+const user = process.env['DB_USER'] || 'user';
+const pwd = process.env['DB_PWD'] || 'pwd';
+const users = { [user]: pwd };
+const auth = basicAuth({
+  users,
+  challenge: true
+});
 dotenv.config({ override: true });
 
 const express_app = express();
@@ -33,6 +39,20 @@ export function app(): express.Express {
 
   // Example Express Rest API endpoints
   express_app.get('/evaluate/*', PuppeteerResolver.resolve);
+
+  express_app.use(auth, (req, res, next) => {
+    next();
+  });
+
+  express_app.get('/db/database.db', (req, res) => {
+    const options = {
+      headers: {
+        'Cache-Control': 'no-cache',
+      }
+    };
+    const filePath = process.cwd() + '/database.db';
+    res.sendFile(filePath, options);
+  });
 
   express_app.get('/api/*', apiProxy);
 
