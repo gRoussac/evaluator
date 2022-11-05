@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { ChangeDetectionStrategy, Component, Inject, InjectionToken, PLATFORM_ID } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 const imports = [
@@ -15,5 +15,18 @@ const imports = [
   imports,
 })
 export class AppComponent {
+  private window!: Window;
+  private isBrowser: boolean = isPlatformBrowser(this.platformId);
+  mail = 'cm91c3NhY0BmcmVlLmZy';
+  tel = 'KzMzNzYxNTM4NDgy';
 
+  constructor(
+    @Inject(PLATFORM_ID) private readonly platformId: InjectionToken<object>,
+    @Inject(DOCUMENT) private readonly document: Document) {
+    this.window = this.document.defaultView as Window;
+  }
+
+  atob(value: string) {
+    return this.isBrowser && this.window?.atob(value);
+  }
 }

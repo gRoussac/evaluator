@@ -154,6 +154,18 @@ hr {
   align-self: center;
   color: #99f3ff;
   margin-left: auto;
+  cursor: pointer;
+  user-select: none;
+  @media (max-width: 768px) {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+  }
+}
+
+div.d-flex {
+  @media (max-width: 768px) {
+    flex-direction: column-reverse;
+  }
 }
 
 @keyframes progress-bar-stripes {

@@ -22,7 +22,7 @@
             *ngIf="result?.stacktrace?.length"
             (click)="openStackTrace($event, i)"
             (mousedown)="$event.preventDefault()"
-            >{{ isOpenStackTrace(i) ? '-' : '+' }} stacktrace</span
+            >{{ isOpenStackTrace(i) ? '-' : '+' }}&nbsp;stacktrace</span
           >
         </span>
         <span
@@ -43,7 +43,7 @@
             class="showBeautify"
             (click)="showBeautify($event, i)"
             (mousedown)="$event.preventDefault()"
-            >{{ isBeautified(i) ? '-' : '+' }} beautify</span
+            >{{ isBeautified(i) ? '-' : '+' }}&nbsp;beautify</span
           >
         </div>
         <hr *ngIf="i !== results.length - 1" />
