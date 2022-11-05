@@ -4,7 +4,7 @@ This project aims to ease evaluating the parameters of javascript functions on a
 
 Typically helps with deobfuscating https://stackoverflow.com/questions/32977908/how-can-i-deobfuscate-this-javascript using `String.fromCharCode` or `window.eval` or other functions like `JSON.stringify`
 
-## Deployed on [Render](https://render.com/) at [https://evaluator.onlyem.io/ ](casper.onrender) ( beta 🏚️🕸️🕷️)
+## Deployed on [Render](https://render.com/) at [evaluator.onlyeum.io](https://evaluator.onlyeum.io/) (beta 🏚️🕸️🕷️)
 
 ## References :
 
@@ -33,13 +33,6 @@ http://localhost:4200/evaluate/?url=https://www.w3schools.com/jsref/tryit.asp?fi
 
 a screen shot of the website will be provided in the response stream.
 
-# 🧙‍♀️ **Development**
-
-## Prerequisites
-
-- npm >= 8.19.2
-- nodejs >= 18.7.0 & < 19
-
 # **🐳 Docker**
 
 > Build and run image with [Dockerfile](./docker/Dockerfile) 🏃‍♂️
@@ -49,6 +42,13 @@ docker build -t evaluator ./docker/ --force-rm
 
 docker container run -t -i --rm -h evaluator -p 4000:4000 evaluator
 ```
+
+# 🧙‍♀️ **Development**
+
+## Prerequisites
+
+- npm >= 8.19.2
+- nodejs >= 18.7.0 & < 19
 
 # 🛠️ Usage with npm
 
