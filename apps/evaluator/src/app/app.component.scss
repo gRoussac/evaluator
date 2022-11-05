@@ -11,4 +11,11 @@ footer {
 }
 a {
   color: #99f3ff;
+  padding-right: 2rem;
+  i {
+    width: 24px;
+    overflow: hidden;
+    position: relative;
+    top: 8px;
+  }
 }

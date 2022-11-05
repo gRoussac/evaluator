@@ -14,7 +14,6 @@ export const highlight = (message: MessageResult) => {
 
   message['result_unpack'] = result.map(element => {
     const elementAsString = typeof element === 'object' ? JSON.stringify(element) : element.toString();
-    console.log(js_beautify(elementAsString));
     return hljs.highlightAuto(js_beautify(elementAsString), ['javascript', 'json', 'text']).value;
   });
   message['stacktrace_as_string'] = message['stacktrace'] && hljs.highlight(JSON.stringify(message['stacktrace'], null, 2), { language: 'json' }).value;

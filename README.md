@@ -1,105 +1,106 @@
+# **_Evaluator_**
 
+This project aims to ease evaluating the parameters of javascript functions on a website.
 
-# Evaluator
+Typically helps with deobfuscating https://stackoverflow.com/questions/32977908/how-can-i-deobfuscate-this-javascript using `String.fromCharCode` or `window.eval` or other functions like `JSON.stringify`
 
-This project was generated using [Nx](https://nx.dev).
+## Deployed on [Render](https://render.com/) at [https://evaluator.onlyem.io/ ](casper.onrender) ( beta 🏚️🕸️🕷️)
 
-<p style="text-align: center;"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="450"></p>
+## References :
 
-🔎 **Smart, Fast and Extensible Build System**
+- https://www.getastra.com/e/malware/infections/the-presence-of-these-malicious-javascript-are-the-sign-of-hacked-opencart-magento-or-prestashop-store
+- https://github.com/gwillem/magento-malware-scanner/blob/master/rules/frontend.txt
 
-## Quick Start & Documentation
+![Evaluator (18)](https://user-images.githubusercontent.com/3099551/200139269-a50b8a15-dbcd-4414-9848-7331cb0dd3c5.png)
 
-[Nx Documentation](https://nx.dev/angular)
+![Evaluator (17)](https://user-images.githubusercontent.com/3099551/200139284-676f2ac4-042d-4de4-8b06-7f3345232996.png)
 
-[10-minute video showing all Nx features](https://nx.dev/getting-started/intro)
+# **Quick Start & Documentation**
 
-[Interactive Tutorial](https://nx.dev/react-tutorial/01-create-application)
+## API
 
-## Adding capabilities to your workspace
+Use
 
-Nx supports many plugins which add capabilities for developing different types of applications and different tools.
+```
+evaluate/?url=[site url]&function=[function to evaluate]
+```
 
-These capabilities include generating applications, libraries, etc as well as the devtools to test, and build projects as well.
+Example
 
-Below are our core plugins:
+```
+http://localhost:4200/evaluate/?url=https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_eval&function=window.eval
+```
 
-- [Angular](https://angular.io)
-  - `ng add @nrwl/angular`
-- [React](https://reactjs.org)
-  - `ng add @nrwl/react`
-- Web (no framework frontends)
-  - `ng add @nrwl/web`
-- [Nest](https://nestjs.com)
-  - `ng add @nrwl/nest`
-- [Express](https://expressjs.com)
-  - `ng add @nrwl/express`
-- [Node](https://nodejs.org)
-  - `ng add @nrwl/node`
+a screen shot of the website will be provided in the response stream.
 
-There are also many [community plugins](https://nx.dev/community) you could add.
+# 🧙‍♀️ **Development**
 
-## Generate an application
+## Prerequisites
 
-Run `ng g @nrwl/angular:app my-app` to generate an application.
+- npm >= 8.19.2
+- nodejs >= 18.7.0 & < 19
 
-> You can use any of the plugins above to generate applications as well.
+# **🐳 Docker**
 
-When using Nx, you can create multiple applications and libraries in the same workspace.
+> Build and run image with [Dockerfile](./docker/Dockerfile) 🏃‍♂️
 
-## Generate a library
+```shell
+docker build -t evaluator ./docker/ --force-rm
 
-Run `ng g @nrwl/angular:lib my-lib` to generate a library.
+docker container run -t -i --rm -h evaluator -p 4000:4000 evaluator
+```
 
-> You can also use any of the plugins above to generate libraries as well.
+# 🛠️ Usage with npm
 
-Libraries are shareable across libraries and applications. They can be imported from `@evaluator/mylib`.
+Run `npm install` to install the application.
+
+```shell
+npm install
+```
 
 ## Development server
 
-Run `ng serve my-app` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
+Run `npm start` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
 
-## Code scaffolding
-
-Run `ng g component my-component --project=my-app` to generate a new component.
+```shell
+npm start
+```
 
 ## Build
 
-Run `ng build my-app` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Run `npm run build` to launch Jest test the project. The build artifacts will be stored in the `dist/` directory.
 
-## Running unit tests
+```shell
+npm run build
+```
 
-Run `ng test my-app` to execute the unit tests via [Jest](https://jestjs.io).
+# 🦀 Usage with Rust
 
-Run `nx affected:test` to execute the unit tests affected by a change.
+## Install
 
-## Running end-to-end tests
+> 📂 Go to `evaluator` subfolder
 
-Run `ng e2e my-app` to execute the end-to-end tests via [Cypress](https://www.cypress.io).
+```
+cd ./evaluator
+cargo build
+cargo run
+```
 
-Run `nx affected:e2e` to execute the end-to-end tests affected by a change.
+- Two parameters :
+- csv file to load (first column is website domain)
+- the function to evaluate
+  Example
 
-## Understand your workspace
+```
+cargo run All-Live-Magento-Sites.csv window.eval
+```
 
-Run `nx graph` to see a diagram of the dependencies of your projects.
+# 📝 License
 
-## Further help
+[GNU GENERAL PUBLIC LICENSE](https://github.com/gRoussac/evaluator/blob/master/LICENSE.md)
 
-Visit the [Nx Documentation](https://nx.dev/angular) to learn more.
+### 🦺 Security
 
+### 🪦 Errors ?
 
-
-
-
-
-## ☁ Nx Cloud
-
-### Distributed Computation Caching & Distributed Task Execution
-
-<p style="text-align: center;"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-cloud-card.png"></p>
-
-Nx Cloud pairs with Nx in order to enable you to build and test code more rapidly, by up to 10 times. Even teams that are new to Nx can connect to Nx Cloud and start saving time instantly.
-
-Teams using Nx gain the advantage of building full-stack applications with their preferred framework alongside Nx’s advanced code generation and project dependency graph, plus a unified experience for both frontend and backend developers.
-
-Visit [Nx Cloud](https://nx.app/) to learn more.
+If you see any typos or errors you can edit the code directly on GitHub and raise a Pull Request on `master` branch, many thanks !

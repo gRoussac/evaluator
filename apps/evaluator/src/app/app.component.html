@@ -1,5 +1,12 @@
 <router-outlet></router-outlet>
 <footer>
-  <a [href]="'mailto:' + atob(mail)">contact me</a>
-  -<a target="_blank" [href]="'https://wa.me/' + atob(tel)">whatsapp me</a>
+  <a [href]="'mailto:' + atob(mail)"
+    ><i class="material-icons">email</i>contact me</a
+  >
+  <a target="_blank" [href]="'https://wa.me/' + atob(tel)"
+    ><i class="material-icons">chat_bubble</i>whatsapp me</a
+  >
+  <a target="_blank" href="https://github.com/gRoussac/evaluator"
+    ><i class="material-icons">code_blocks</i>github</a
+  >
 </footer>
