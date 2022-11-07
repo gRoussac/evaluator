@@ -29,7 +29,6 @@ ENV PORT=4000
 RUN npm install --loglevel=error && npm run build --loglevel=error
 USER root
 # v 19.2.0
-RUN pwd
 # RUN ls -al .cache/puppeteer/chrome/linux-1056772/chrome-linux/
 ARG INSTALL_DIR=.cache/puppeteer/chrome/linux-1056772/chrome-linux/
 # # v 18.2.1
