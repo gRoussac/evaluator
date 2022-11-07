@@ -38,9 +38,10 @@ a screen shot of the website will be provided in the response stream.
 > Build and run image with [Dockerfile](./docker/Dockerfile) 🏃‍♂️
 
 ```shell
-docker build -t evaluator ./docker/ --force-rm
+cd docker
+docker build -t evaluator . --force-rm
 
-docker container run -t -i --rm -h evaluator -p 4000:4000 evaluator
+docker compose up
 ```
 
 # 🧙‍♀️ **Development**
