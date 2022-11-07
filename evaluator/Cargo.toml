@@ -7,3 +7,5 @@ edition = "2021"
 
 [dependencies]
 csv = "*"
+async-process = "*"
+async-std = { version = "1.6", features = ["attributes"] }
