@@ -127,7 +127,7 @@ export class PuppeteerResolver {
 class Puppet {
   result$: Subject<puppeteer.ConsoleMessage> = new Subject();
   private browser: Promise<puppeteer.Browser>;
-  private readonly timeout = 120000;
+  private readonly timeout = 240000;
   private readonly regeXss = /[\w]+\.[\w]+(\.[\w]+)?/;
   private readonly sqliteService: SqliteService;
 
