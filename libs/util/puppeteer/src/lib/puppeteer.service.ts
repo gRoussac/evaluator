@@ -67,7 +67,7 @@ export class PuppeteerResolver {
       ws.send(JSON.stringify('goto page ' + message.url));
       const screenshot = await puppet.goto(message);
       if (screenshot) {
-        ws.send(JSON.stringify('sendscreenshot'));
+        ws.send(JSON.stringify('sends creenshot'));
         ws.send(screenshot);
       }
       ws.send(JSON.stringify('close puppet'));
