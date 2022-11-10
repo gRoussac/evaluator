@@ -5,8 +5,14 @@ const myArgs = process.argv.slice(2);
 //console.log('myArgs: ', myArgs);
 (async () => {
   const url = myArgs[0] || 'https://www.example.com/';
+  const hostname = getHostname(url.trim());
   const fn = myArgs[1] || 'window.eval';
-  const browser = await puppeteer.launch({ headless: true });
+  const timeout = +myArgs[2] || 150000;
+  const search_pattern = myArgs[3] || '';
+  const browser = await puppeteer.launch({
+    headless: true,
+    ignoreHTTPSErrors: true,
+  });
   const page = await browser.newPage();
   await page.setRequestInterception(true);
   let tpl = template;
@@ -14,16 +20,16 @@ const myArgs = process.argv.slice(2);
   await page.evaluateOnNewDocument(tpl);
 
   await page.setUserAgent(
-    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36'
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.5304.87 Safari/537.36'
   );
 
   page.on('request', (request) => {
     if (
       request.isNavigationRequest() &&
       request.frame() === page.mainFrame() &&
-      !request.url().includes(getHostname(url.trim()))
+      !request.url().includes(hostname)
     ) {
-      console.log('aborted');
+      console.error('aborted', request.url());
       request.abort('aborted');
     } else {
       request.continue();
@@ -32,7 +38,10 @@ const myArgs = process.argv.slice(2);
 
   page.on('console', (consoleObj) => {
     let execution = consoleObj.text();
-    if (!execution.includes(START)) {
+    if (
+      !execution.includes(START) ||
+      (search_pattern && !execution.includes(search_pattern))
+    ) {
       // console.error(execution);
       return;
     }
@@ -40,15 +49,22 @@ const myArgs = process.argv.slice(2);
     const json = JSON.parse(execution);
     if (json && typeof json === 'object') {
       json.forEach((element) => {
-        element && console.log(element.toString().trim());
+        element &&
+          console?.log(element.toString().trim())?.catch((err) => {
+            console.error(err);
+          });
       });
     }
   });
 
-  await page.goto(url, {
-    timeout: 6666,
-    waitUntil: ['domcontentloaded', 'networkidle0'],
-  });
+  await page
+    .goto(url, {
+      timeout,
+      waitUntil: ['domcontentloaded'],
+    })
+    .catch((err) => {
+      console.error('Error with', url, err);
+    });
 
   await page.close();
   await browser.close();
@@ -61,5 +77,6 @@ function getHostname(url_test) {
   } catch (_) {
     return url_test;
   }
-  return url.hostname;
+  //return url.hostname;
+  return url.hostname.split('.')[0];
 }

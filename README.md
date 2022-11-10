@@ -87,13 +87,17 @@ cargo build
 cargo run
 ```
 
-- Two parameters :
-- csv file to load (first column is website domain)
-- the function to evaluate
+- Five parameters :
+- `-path` or `-p` csv file to load (first column is website domain)
+- `-function` or `-f` the function to evaluate
+- `-nb_threads` or `-n` the number of threads
+- `-timeout` or `-t` the navigation timeout
+- `-search_pattern` or `-s` a pattern to search
+
   Example
 
 ```
-cargo run All-Live-Magento-Sites.csv window.eval
+cargo run -- -p All-Live-Magento-Sites.csv -f window.eval -n 5 -s checkout
 ```
 
 # 📝 License
