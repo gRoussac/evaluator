@@ -12,9 +12,13 @@
 **/*.swo
 
 node_modules
+**/node_modules
 .nx
+**/.nx
 .angular
+**/.angular
 dist
+**/dist
 .docker-fast-context
 tmp
 out-tsc
@@ -26,7 +30,7 @@ database.db
 !.env.example
 
 # Rust CLI build artifacts (not needed in Node image)
-evaluator/target
+rust/target
 **/target
 
 # Local tooling / docs not needed in image
